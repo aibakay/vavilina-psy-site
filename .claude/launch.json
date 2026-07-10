@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "static-site",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "4849"],
+      "port": 4849
+    },
+    {
+      "name": "built-site",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "4850", "--directory", "_site"],
+      "port": 4850
+    }
+  ]
+}

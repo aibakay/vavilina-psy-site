@@ -1,0 +1,13 @@
+{
+  "name": "vavilina-psy-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Сайт Полины Вавилиной — сборка на 11ty из данных для будущей админ-панели",
+  "scripts": {
+    "build": "eleventy",
+    "start": "eleventy --serve"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}

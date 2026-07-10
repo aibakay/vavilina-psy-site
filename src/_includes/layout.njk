@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="{{ description or site.seo.defaultDescription }}" />
+    <title>{{ title or site.seo.defaultTitle }}</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:title" content="{{ title or site.seo.defaultTitle }}" />
+    <meta property="og:description" content="{{ ogDescription or description or site.seo.defaultDescription }}" />
+    <meta property="og:image" content="{{ ogImage or site.seo.ogImage }}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    {%- if includeTwitterExtra %}
+    <meta name="twitter:title" content="{{ title or site.seo.defaultTitle }}" />
+    <meta name="twitter:description" content="{{ ogDescription or description or site.seo.defaultDescription }}" />
+    <meta name="twitter:image" content="{{ ogImage or site.seo.ogImage }}" />
+    {%- endif %}
+
+    {%- if preloadImage %}
+    <link rel="preload" href="{{ preloadImage }}" as="image" />
+    {%- endif %}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <script>document.documentElement.classList.add("js");</script>
+    {%- if jsonLd %}
+    <script type="application/ld+json">
+      {{ jsonLd | json | safe }}
+    </script>
+    {%- endif %}
+  </head>
+  <body>
+    {{ content | safe }}
+    <script src="/script.js"></script>
+  </body>
+</html>

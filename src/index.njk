@@ -1,0 +1,324 @@
+---
+layout: layout.njk
+title: "Полина Вавилина | Клинический психолог"
+description: "Полина Вавилина, клинический психолог. Онлайн-консультации, психоаналитическая психотерапия, семейное и бизнес-консультирование."
+preloadImage: "/assets/hero-portrait.jpg"
+includeTwitterExtra: true
+jsonLd:
+  "@context": "https://schema.org"
+  "@type": "ProfessionalService"
+  name: "Полина Вавилина, клинический психолог"
+  description: "Клинический психолог. Онлайн-консультации, психоаналитическая психотерапия, семейное и бизнес-консультирование."
+  image: "/assets/hero-portrait.jpg"
+  telephone: "+79787516745"
+  priceRange: "1000-7000 RUB"
+  areaServed: "RU"
+  openingHoursSpecification:
+    "@type": "OpeningHoursSpecification"
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    opens: "09:00"
+    closes: "21:00"
+  sameAs:
+    - "https://vk.com/vavilinapsyhelp"
+    - "https://t.me/vavilinapsyhelp"
+    - "https://youtube.com/@vavilinaapollinaria"
+    - "https://instagram.com/vavilinaapollinaria/"
+    - "https://www.b17.ru/vavilinaapollinaria"
+---
+<header class="site-header" data-reveal>
+  <a class="brand" href="#top" aria-label="На главную">
+    <span>{{ site.brand.name }}</span>
+    <small>{{ site.brand.tagline }}</small>
+  </a>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Открыть меню">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <nav class="site-nav" id="site-nav" aria-label="Основная навигация">
+    {%- for item in site.nav %}
+    <a href="{{ item.href }}">{{ item.label }}</a>
+    {%- endfor %}
+    <a class="nav-cta" href="{{ site.contacts.whatsapp }}" target="_blank" rel="noopener noreferrer">Записаться</a>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero section">
+    <div class="hero-copy" data-reveal>
+      <p class="soft-line">{{ hero.eyebrow }}</p>
+      <h1>{{ hero.title }}</h1>
+      <p class="lead">{{ hero.lead }}</p>
+      <div class="hero-tags" aria-label="Основные запросы">
+        {%- for tag in hero.tags %}
+        <span>{{ tag }}</span>
+        {%- endfor %}
+      </div>
+      <div class="hero-actions">
+        <a class="button button-primary" href="{{ site.contacts.whatsapp }}" target="_blank" rel="noopener noreferrer">
+          Записаться на консультацию
+        </a>
+        <a class="button button-secondary" href="{{ hero.secondaryCta.href }}">{{ hero.secondaryCta.label }}</a>
+      </div>
+      <dl class="hero-facts" aria-label="Ключевые факты">
+        {%- for fact in hero.facts %}
+        <div>
+          <dt>{{ fact.value }}</dt>
+          <dd>{{ fact.label }}</dd>
+        </div>
+        {%- endfor %}
+      </dl>
+    </div>
+    <div class="hero-media" data-reveal>
+      <img
+        src="{{ hero.image.src }}"
+        alt="{{ hero.image.alt }}"
+        width="{{ hero.image.width }}"
+        height="{{ hero.image.height }}"
+        fetchpriority="high"
+      />
+      <div class="availability">
+        <span>{{ hero.availability.label }}</span>
+        <strong>{{ hero.availability.value }}</strong>
+        <small>{{ hero.availability.channels }}</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="section trust" id="trust">
+    <div class="section-heading" data-reveal>
+      <span>{{ trust.eyebrow }}</span>
+      <h2>{%- for part in trust.headingParts %}<span>{{ part }}</span>{%- endfor %}</h2>
+      <p>{{ trust.intro }}</p>
+    </div>
+    <div class="trust-grid">
+      {%- for item in trust.items %}
+      <article data-reveal>
+        <h3>{{ item.title }}</h3>
+        {%- for paragraph in item.paragraphs %}
+        <p>{{ paragraph }}</p>
+        {%- endfor %}
+      </article>
+      {%- endfor %}
+    </div>
+  </section>
+
+  <section class="section requests" id="requests">
+    <div class="section-heading align-left" data-reveal>
+      <span>{{ requests.eyebrow }}</span>
+      <h2>{{ requests.title }}</h2>
+      <p>{{ requests.intro }}</p>
+    </div>
+    <div class="request-list" data-reveal>
+      {%- for item in requests.items %}
+      <span>{{ item }}</span>
+      {%- endfor %}
+    </div>
+  </section>
+
+  <section class="section process" id="process">
+    <div class="section-heading" data-reveal>
+      <span>{{ process.eyebrow }}</span>
+      <h2>{{ process.title }}</h2>
+    </div>
+    <ol class="steps">
+      {%- for step in process.steps %}
+      <li data-reveal>
+        <strong>{{ step.title }}</strong>
+        <p>{{ step.text }}</p>
+      </li>
+      {%- endfor %}
+    </ol>
+  </section>
+
+  <section class="section services" id="services">
+    <div class="section-heading align-left" data-reveal>
+      <span>{{ services.eyebrow }}</span>
+      <h2>{{ services.title }}</h2>
+      <p>{{ services.intro }}</p>
+    </div>
+    <div class="service-grid">
+      {%- for item in services.items %}
+      <article class="service-card{% if item.featured %} featured{% endif %}" data-reveal>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.text }}</p>
+        <strong>{{ item.price }}</strong>
+        <a href="{{ site.contacts.whatsapp }}" target="_blank" rel="noopener noreferrer">Записаться</a>
+      </article>
+      {%- endfor %}
+    </div>
+    <details class="service-note" data-reveal>
+      <summary>{{ services.note.summary }}</summary>
+      <div>
+        {%- for paragraph in services.note.paragraphs %}
+        <p>{{ paragraph }}</p>
+        {%- endfor %}
+      </div>
+    </details>
+  </section>
+
+  <section class="section products" id="products">
+    <div class="section-heading align-left" data-reveal>
+      <span>{{ products.eyebrow }}</span>
+      <h2>{{ products.title }}</h2>
+      <p>{{ products.intro }}</p>
+    </div>
+
+    <div class="product-grid">
+      {%- for item in products.items %}
+      <article class="product-card" data-reveal>
+        <span class="product-badge">{{ item.badge }}</span>
+        <h3>{{ item.title }}</h3>
+        <p class="product-lead">{{ item.lead }}</p>
+        <p class="product-audience"><strong>Кому подойдёт:</strong> {{ item.audience }}</p>
+        <ul class="product-points">
+          {%- for point in item.points %}
+          <li>{{ point }}</li>
+          {%- endfor %}
+        </ul>
+        <div class="product-foot">
+          <span class="product-price">{{ item.price }}</span>
+          <div class="product-actions">
+            <a class="button button-secondary" href="{{ item.url }}">Подробнее</a>
+            <a class="button button-primary" href="{{ item.url }}#buy">{{ item.buyLabel }}</a>
+          </div>
+        </div>
+      </article>
+      {%- endfor %}
+    </div>
+
+    <div class="product-choice" data-reveal>
+      <h3>{{ products.choice.title }}</h3>
+      <div class="product-choice-grid">
+        {%- for item in products.choice.items %}
+        <div>
+          <strong>{{ item.title }}</strong>
+          <p>{{ item.text }}</p>
+        </div>
+        {%- endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="section about" id="about">
+    <div class="about-media" data-reveal>
+      <img
+        src="{{ about.image.src }}"
+        alt="{{ about.image.alt }}"
+        width="{{ about.image.width }}"
+        height="{{ about.image.height }}"
+        loading="lazy"
+      />
+    </div>
+    <div class="about-copy" data-reveal>
+      <span>{{ about.eyebrow }}</span>
+      <h2>{{ about.title }}</h2>
+      {%- for paragraph in about.paragraphs %}
+      <p>{{ paragraph }}</p>
+      {%- endfor %}
+      <div class="values">
+        {%- for value in about.values %}
+        <span>{{ value }}</span>
+        {%- endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="section reviews" id="reviews">
+    <div class="section-heading" data-reveal>
+      <h2>{{ reviews.title }}</h2>
+    </div>
+
+    <div class="review-tabs" data-reveal role="tablist" aria-label="Категории отзывов">
+      {%- for tab in reviews.tabs %}
+      <button
+        id="tab-{{ tab.id }}"
+        class="review-tab{% if tab.active %} is-active{% endif %}"
+        type="button"
+        role="tab"
+        aria-selected="{{ 'true' if tab.active else 'false' }}"
+        {%- if not tab.active %} tabindex="-1"{% endif %}
+        aria-controls="{{ tab.id }}"
+        data-review-tab="{{ tab.id }}"
+      >{{ tab.label }}</button>
+      {%- endfor %}
+    </div>
+
+    {%- for tab in reviews.tabs %}
+    <div
+      class="review-group{% if tab.active %} is-active{% endif %}"
+      id="{{ tab.id }}"
+      data-reveal
+      role="tabpanel"
+      aria-labelledby="tab-{{ tab.id }}"
+      tabindex="0"
+      {%- if not tab.active %} hidden{% endif %}
+    >
+      <div class="review-grid{% if tab.compact %} compact{% endif %}">
+        {%- for review in tab.items %}
+        <article class="review-card"><strong>{% if review.name %}{{ review.name }}{% else %}<span class="visually-hidden">Аноним</span>{% endif %}</strong><p>{{ review.text }}</p></article>
+        {%- endfor %}
+      </div>
+    </div>
+    {%- endfor %}
+  </section>
+
+  <section class="section faq" id="faq">
+    <div class="section-heading align-left" data-reveal>
+      <span>{{ faq.eyebrow }}</span>
+      <h2>{{ faq.title }}</h2>
+    </div>
+    <div class="accordion" data-reveal>
+      {%- for item in faq.items %}
+      <details{% if item.open %} open{% endif %}>
+        <summary>{{ item.question }}</summary>
+        <p>{{ item.answer }}</p>
+      </details>
+      {%- endfor %}
+    </div>
+  </section>
+
+  <section class="final-cta section" id="contacts" data-reveal>
+    <div>
+      <span>Запись</span>
+      <h2>Можно начать с первой встречи и спокойно сформулировать запрос</h2>
+      <p>
+        Напишите удобным способом. На первой консультации можно обсудить, что вас
+        беспокоит, и понять, подходит ли вам формат работы.
+      </p>
+      <p class="final-alt">
+        Предпочитаете самостоятельный формат?
+        <a href="#products">Посмотреть продукты и материалы →</a>
+      </p>
+    </div>
+    <div class="contact-actions">
+      <a class="button button-primary" href="{{ site.contacts.whatsapp }}" target="_blank" rel="noopener noreferrer">Записаться на консультацию</a>
+      <a class="button button-secondary" href="{{ site.contacts.telegramAdmin }}" target="_blank" rel="noopener noreferrer">Telegram</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div>
+    <strong>{{ site.brand.name }}</strong>
+    <p>{{ site.legal.entity }}</p>
+    <p>{{ site.legal.inn }}</p>
+    <p>{{ site.legal.hours }}</p>
+  </div>
+  <nav aria-label="Социальные сети">
+    <a href="{{ site.contacts.vk }}" target="_blank" rel="noopener noreferrer">ВКонтакте</a>
+    <a href="{{ site.contacts.telegramChannel }}" target="_blank" rel="noopener noreferrer">Telegram-канал</a>
+    <a href="{{ site.contacts.youtube }}" target="_blank" rel="noopener noreferrer">YouTube</a>
+    <a href="{{ site.contacts.instagram }}" target="_blank" rel="noopener noreferrer">Instagram</a>
+    <a href="{{ site.contacts.b17 }}" target="_blank" rel="noopener noreferrer">B17</a>
+  </nav>
+  <nav aria-label="Документы">
+    {%- for doc in site.legal.documents %}
+    <a href="{{ doc.url }}" target="_blank" rel="noopener noreferrer">{{ doc.label }}</a>
+    {%- endfor %}
+  </nav>
+</footer>
+
+<a class="mobile-sticky-cta" href="{{ site.contacts.whatsapp }}" target="_blank" rel="noopener noreferrer">
+  Записаться
+</a>
