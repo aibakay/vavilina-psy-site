@@ -275,6 +275,11 @@ collections:
         file: src/_data/site.json
         fields:
           - { label: Адрес сайта (для SEO), name: url, widget: string, hint: 'Полный адрес с https и без слэша в конце, например https://vavilinaapollinaria-psy.ru' }
+          - label: Аналитика
+            name: analytics
+            widget: object
+            fields:
+              - { label: 'Яндекс.Метрика — номер счётчика', name: yandexMetrika, widget: string, required: false, hint: 'Только цифры, например 98765432. Пусто — аналитика выключена.' }
           - label: Бренд
             name: brand
             widget: object

@@ -1,5 +1,8 @@
 {
   "url": "https://vavilinaapollinaria-psy.ru",
+  "analytics": {
+    "yandexMetrika": ""
+  },
   "brand": {
     "name": "Полина Вавилина",
     "tagline": "клинический психолог"
@@ -37,12 +40,30 @@
     ]
   },
   "nav": [
-    { "label": "О подходе", "href": "#trust" },
-    { "label": "Запросы", "href": "#requests" },
-    { "label": "Услуги", "href": "#services" },
-    { "label": "Продукты", "href": "#products" },
-    { "label": "Отзывы", "href": "#reviews" },
-    { "label": "FAQ", "href": "#faq" }
+    {
+      "label": "О подходе",
+      "href": "#trust"
+    },
+    {
+      "label": "Запросы",
+      "href": "#requests"
+    },
+    {
+      "label": "Услуги",
+      "href": "#services"
+    },
+    {
+      "label": "Продукты",
+      "href": "#products"
+    },
+    {
+      "label": "Отзывы",
+      "href": "#reviews"
+    },
+    {
+      "label": "FAQ",
+      "href": "#faq"
+    }
   ],
   "seo": {
     "defaultTitle": "Полина Вавилина | Клинический психолог",
