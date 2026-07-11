@@ -73,32 +73,20 @@ layout: layout.njk
   </section>
 
   <section class="section pp-buy" id="buy" data-reveal>
-    <h2>Забрать вебинар</h2>
-    <div class="offer-card">
-      <div class="offer-main">
-        <span class="product-badge">{{ page.offer.badge }}</span>
-        <h3>{{ page.offer.title }}</h3>
+    <h2>{{ page.offer.title }}</h2>
+    <div class="tier-grid">
+      {%- for tier in page.offer.tiers %}
+      <div class="tier-card{% if tier.featured %} featured{% endif %}">
+        <span class="product-badge">{{ tier.badge }}</span>
+        <p class="tier-price">{{ tier.price }}</p>
         <ul class="offer-list">
-          {%- for point in page.offer.points %}
+          {%- for point in tier.points %}
           <li>{{ point }}</li>
           {%- endfor %}
         </ul>
+        <a class="button {% if tier.featured %}button-primary{% else %}button-secondary{% endif %}" href="{{ tier.buyUrl }}" target="_blank" rel="noopener noreferrer">{{ tier.buyLabel }}</a>
       </div>
-      <div class="offer-cta">
-        <span class="offer-label">Стоимость</span>
-        <p class="offer-price">{{ page.offer.price }}</p>
-        <p class="offer-price-note">{{ page.offer.priceNote }}</p>
-        <a class="button button-primary" href="{{ page.offer.buyUrl }}" target="_blank" rel="noopener noreferrer">{{ page.offer.buyLabel }}</a>
-        {%- if page.offer.supportOptions.length %}
-        <p class="offer-support">
-          Ценность вебинара для вас выше? Можно поддержать авторов и оплатить
-          {%- for opt in page.offer.supportOptions %}
-          {%- if not loop.first %}{% if loop.last %} или {% else %}, {% endif %}{% endif %}
-          <a href="{{ opt.url }}" target="_blank" rel="noopener noreferrer">{{ opt.amount }}</a>
-          {%- endfor %}.
-        </p>
-        {%- endif %}
-      </div>
+      {%- endfor %}
     </div>
     <p class="pp-note">Материал защищён авторским правом</p>
   </section>
