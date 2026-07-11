@@ -65,8 +65,15 @@ layout: layout.njk
     <div class="pp-authors">
       {%- for author in page.authors %}
       <div class="pp-author">
-        <strong>{{ author.name }}</strong>
-        <span>{{ author.role }}</span>
+        {%- if author.image %}
+        <img class="pp-author-photo" src="{{ author.image }}" alt="{{ author.name }}" loading="lazy" />
+        {%- else %}
+        <span class="pp-author-photo pp-author-photo--empty" aria-hidden="true">{{ author.name | first }}</span>
+        {%- endif %}
+        <span class="pp-author-text">
+          <strong>{{ author.name }}</strong>
+          <span>{{ author.role }}</span>
+        </span>
       </div>
       {%- endfor %}
     </div>

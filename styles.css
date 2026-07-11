@@ -1957,22 +1957,53 @@ html.js [data-reveal].is-visible {
 }
 
 .pp-author {
+  display: flex;
+  align-items: center;
+  gap: 18px;
   flex: 1 1 260px;
-  padding: 24px 28px;
+  padding: 22px 26px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(255, 250, 245, 0.72);
   box-shadow: 0 12px 35px rgba(77, 43, 35, 0.06);
 }
 
-.pp-author strong {
+.pp-author-photo {
+  flex: 0 0 auto;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: 50% 20%;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6px 18px rgba(77, 43, 35, 0.12);
+}
+
+.pp-author-photo--empty {
+  display: grid;
+  place-items: center;
+  background: var(--wine-dark);
+  color: #fff;
+  font-family: var(--serif);
+  font-size: 30px;
+  line-height: 1;
+}
+
+.pp-author-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.pp-author-text strong {
   display: block;
   color: var(--wine-dark);
   font-family: var(--serif);
   font-size: 24px;
 }
 
-.pp-author span {
+.pp-author-text span {
   color: var(--muted);
   font-size: 14px;
 }

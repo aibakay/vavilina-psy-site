@@ -395,6 +395,7 @@ collections:
                 fields:
                   - { label: Имя, name: name, widget: string }
                   - { label: Роль, name: role, widget: string }
+                  - { label: Фото, name: image, widget: image, required: false, hint: Квадратное или портретное фото — покажется кружком. }
               - label: Блок покупки
                 name: offer
                 widget: object
