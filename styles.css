@@ -2119,6 +2119,28 @@ html.js [data-reveal].is-visible {
   height: auto;
 }
 
+.cert-open {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.cert-open img {
+  transition: transform 0.35s ease;
+}
+
+.cert-open:hover img {
+  transform: scale(1.04);
+}
+
+.cert-open:focus-visible {
+  outline: 2px solid var(--wine);
+  outline-offset: 2px;
+}
+
 .cert-card figcaption {
   padding: 14px 18px;
   color: var(--muted);
@@ -2128,6 +2150,66 @@ html.js [data-reveal].is-visible {
 @media (max-width: 768px) {
   .cert-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Просмотр сертификата на весь экран */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(24, 14, 12, 0.9);
+  cursor: zoom-out;
+  animation: lightbox-fade 0.2s ease;
+}
+
+.lightbox[hidden] {
+  display: none;
+}
+
+.lightbox-img {
+  max-width: min(1100px, 94vw);
+  max-height: 92vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  cursor: default;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+@keyframes lightbox-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 

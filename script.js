@@ -222,3 +222,50 @@ reviewTabsList.forEach((tab) => {
     }
   });
 });
+
+const lightbox = document.getElementById("lightbox");
+
+if (lightbox) {
+  const lightboxImg = document.getElementById("lightbox-img");
+  const lightboxClose = lightbox.querySelector(".lightbox-close");
+  let lastFocused = null;
+
+  const openLightbox = (src, alt, trigger) => {
+    lastFocused = trigger ?? null;
+    lightboxImg.src = src;
+    lightboxImg.alt = alt ?? "";
+    lightbox.hidden = false;
+    document.body.style.overflow = "hidden";
+    lightboxClose.focus();
+  };
+
+  const closeLightbox = () => {
+    lightbox.hidden = true;
+    lightboxImg.removeAttribute("src");
+    document.body.style.overflow = "";
+    lastFocused?.focus();
+  };
+
+  document.querySelectorAll(".cert-open").forEach((button) => {
+    button.addEventListener("click", () => {
+      const img = button.querySelector("img");
+      if (img) {
+        openLightbox(img.currentSrc || img.src, img.alt, button);
+      }
+    });
+  });
+
+  lightboxClose.addEventListener("click", closeLightbox);
+
+  lightbox.addEventListener("click", (event) => {
+    if (event.target !== lightboxImg) {
+      closeLightbox();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !lightbox.hidden) {
+      closeLightbox();
+    }
+  });
+}

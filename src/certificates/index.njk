@@ -24,7 +24,9 @@ layout: layout.njk
     <div class="cert-grid">
       {%- for item in page.items %}
       <figure class="cert-card" data-reveal>
-        <img src="{{ item.src }}" alt="{{ item.alt }}" loading="lazy" />
+        <button type="button" class="cert-open" aria-label="Открыть изображение: {{ item.alt }}">
+          <img src="{{ item.src }}" alt="{{ item.alt }}" loading="lazy" />
+        </button>
         {%- if item.caption %}
         <figcaption>{{ item.caption }}</figcaption>
         {%- endif %}
@@ -35,6 +37,11 @@ layout: layout.njk
     <p class="pp-intro">Сертификаты скоро появятся на этой странице.</p>
     {%- endif %}
   </section>
+
+  <div class="lightbox" id="lightbox" hidden>
+    <button type="button" class="lightbox-close" aria-label="Закрыть">&times;</button>
+    <img class="lightbox-img" id="lightbox-img" src="" alt="" />
+  </div>
 </main>
 
 <footer class="site-footer">
