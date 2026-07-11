@@ -1959,24 +1959,25 @@ html.js [data-reveal].is-visible {
 .pp-author {
   display: flex;
   align-items: center;
-  gap: 18px;
-  flex: 1 1 260px;
-  padding: 22px 26px;
+  gap: 24px;
+  flex: 1 1 340px;
+  max-width: 500px;
+  padding: 28px 32px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 14px;
   background: rgba(255, 250, 245, 0.72);
   box-shadow: 0 12px 35px rgba(77, 43, 35, 0.06);
 }
 
 .pp-author-photo {
   flex: 0 0 auto;
-  width: 76px;
-  height: 76px;
+  width: 128px;
+  height: 128px;
   border-radius: 50%;
   object-fit: cover;
-  object-position: 50% 20%;
-  border: 2px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 6px 18px rgba(77, 43, 35, 0.12);
+  object-position: 50% 18%;
+  border: 3px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 22px rgba(77, 43, 35, 0.14);
 }
 
 .pp-author-photo--empty {
@@ -1985,14 +1986,14 @@ html.js [data-reveal].is-visible {
   background: var(--wine-dark);
   color: #fff;
   font-family: var(--serif);
-  font-size: 30px;
+  font-size: 52px;
   line-height: 1;
 }
 
 .pp-author-text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   min-width: 0;
 }
 
@@ -2000,7 +2001,8 @@ html.js [data-reveal].is-visible {
   display: block;
   color: var(--wine-dark);
   font-family: var(--serif);
-  font-size: 24px;
+  font-size: 27px;
+  line-height: 1.2;
 }
 
 .pp-author-text span {
