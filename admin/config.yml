@@ -1,0 +1,530 @@
+# Конфигурация панели редактирования (Sveltia CMS).
+# Каждый «файл» ниже — это блок сайта. Клиент редактирует поля в форме,
+# при сохранении изменения коммитятся в репозиторий, а Vercel пересобирает сайт.
+
+backend:
+  name: github
+  repo: aibakay/vavilina-psy-site
+  branch: main
+  # Стартовый адрес OAuth задаётся автоматически из текущего домена (см. admin/index.html).
+  # Здесь указываем только путь до функции авторизации на Vercel.
+  auth_endpoint: api/auth
+  commit_messages:
+    create: 'admin: создан раздел «{{collection}}»'
+    update: 'admin: обновлён раздел «{{collection}}»'
+    delete: 'admin: удалён раздел «{{collection}}»'
+    uploadMedia: 'admin: загружен файл {{path}}'
+    deleteMedia: 'admin: удалён файл {{path}}'
+
+# Язык интерфейса панели
+locale: ru
+
+# Куда загружаются картинки (портреты, сертификаты и т.п.)
+media_folder: assets
+public_folder: /assets
+
+collections:
+  # =========================================================================
+  #  ГЛАВНАЯ СТРАНИЦА — блоки сверху вниз
+  # =========================================================================
+  - name: main
+    label: Главная страница
+    label_singular: Блок
+    description: Блоки главной страницы сверху вниз.
+    editor:
+      preview: false
+    files:
+      # ---- Первый экран (hero) -------------------------------------------
+      - name: hero
+        label: 1. Первый экран
+        file: src/_data/hero.json
+        fields:
+          - { label: Надпись сверху, name: eyebrow, widget: string }
+          - { label: Заголовок (имя), name: title, widget: string }
+          - { label: Вводный текст, name: lead, widget: text }
+          - label: Теги под текстом
+            name: tags
+            widget: list
+            hint: Короткие слова-темы. Enter — новый тег.
+          - label: Кнопка «второстепенная»
+            name: secondaryCta
+            widget: object
+            fields:
+              - { label: Текст кнопки, name: label, widget: string }
+              - { label: Ссылка (якорь или URL), name: href, widget: string }
+          - label: Цифры-факты
+            name: facts
+            widget: list
+            fields:
+              - { label: Значение, name: value, widget: string }
+              - { label: Подпись, name: label, widget: string }
+          - label: Портрет
+            name: image
+            widget: object
+            fields:
+              - { label: Фото, name: src, widget: image }
+              - { label: Описание фото (alt), name: alt, widget: string }
+              - { label: Ширина, px, name: width, widget: number, hint: Менять только при замене на фото другого размера. }
+              - { label: Высота, px, name: height, widget: number, hint: Менять только при замене на фото другого размера. }
+          - label: Формат работы
+            name: availability
+            widget: object
+            fields:
+              - { label: Подпись, name: label, widget: string }
+              - { label: Значение, name: value, widget: string }
+              - { label: Каналы связи, name: channels, widget: string }
+
+      # ---- Доверие / подход ----------------------------------------------
+      - name: trust
+        label: 2. Доверие и подход
+        file: src/_data/trust.json
+        fields:
+          - { label: Надпись сверху, name: eyebrow, widget: string }
+          - label: Заголовок (части)
+            name: headingParts
+            widget: list
+            field: { label: Часть заголовка, name: part, widget: string }
+            hint: 'Заголовок собирается из частей. ВАЖНО: пробелы в конце частей нужны для верного отступа между словами.'
+          - { label: Вводный текст, name: intro, widget: text }
+          - label: Карточки
+            name: items
+            widget: list
+            fields:
+              - { label: Заголовок карточки, name: title, widget: string }
+              - label: Абзацы
+                name: paragraphs
+                widget: list
+                field: { label: Абзац, name: paragraph, widget: text }
+              - label: Ссылка (необязательно)
+                name: link
+                widget: object
+                required: false
+                collapsed: true
+                hint: Оставьте оба поля пустыми, если ссылка не нужна.
+                fields:
+                  - { label: Текст ссылки, name: label, widget: string, required: false }
+                  - { label: Адрес, name: href, widget: string, required: false }
+
+      # ---- Запросы --------------------------------------------------------
+      - name: requests
+        label: 3. С чем обращаются
+        file: src/_data/requests.json
+        fields:
+          - { label: Надпись сверху, name: eyebrow, widget: string }
+          - { label: Заголовок, name: title, widget: string }
+          - { label: Вводный текст, name: intro, widget: text }
+          - label: Список запросов
+            name: items
+            widget: list
+            hint: Короткие темы. Enter — новый пункт.
+
+      # ---- О специалисте --------------------------------------------------
+      - name: about
+        label: 4. О специалисте
+        file: src/_data/about.json
+        fields:
+          - { label: Надпись сверху, name: eyebrow, widget: string }
+          - { label: Заголовок, name: title, widget: string }
+          - label: Абзацы
+            name: paragraphs
+            widget: list
+            field: { label: Абзац, name: paragraph, widget: text }
+          - label: Ценности
+            name: values
+            widget: list
+            hint: Короткие слова. Enter — новый пункт.
+          - label: Фото
+            name: image
+            widget: object
+            fields:
+              - { label: Фото, name: src, widget: image }
+              - { label: Описание фото (alt), name: alt, widget: string }
+              - { label: Ширина, px, name: width, widget: number, hint: Менять только при замене на фото другого размера. }
+              - { label: Высота, px, name: height, widget: number, hint: Менять только при замене на фото другого размера. }
+
+      # ---- Услуги ---------------------------------------------------------
+      - name: services
+        label: 5. Услуги и цены
+        file: src/_data/services.json
+        fields:
+          - { label: Надпись сверху, name: eyebrow, widget: string }
+          - { label: Заголовок, name: title, widget: string }
+          - { label: Вводный текст, name: intro, widget: text }
+          - label: Услуги
+            name: items
+            widget: list
+            summary: '{{fields.title}} — {{fields.price}}'
+            fields:
+              - { label: Выделить карточку, name: featured, widget: boolean, default: false, required: false }
+              - { label: Название услуги, name: title, widget: string }
+              - { label: Описание, name: text, widget: text }
+              - { label: Цена, name: price, widget: string, hint: 'Например: 4 000 ₽' }
+          - label: Блок условий (сворачиваемый)
+            name: note
+            widget: object
+            fields:
+              - { label: Заголовок блока, name: summary, widget: string }
+              - label: Абзацы условий
+                name: paragraphs
+                widget: list
+                field: { label: Абзац, name: paragraph, widget: text }
+
+      # ---- Продукты (секция на главной) -----------------------------------
+      - name: products
+        label: 6. Продукты (секция на главной)
+        file: src/_data/products.json
+        fields:
+          - { label: Надпись сверху, name: eyebrow, widget: string }
+          - { label: Заголовок, name: title, widget: string }
+          - { label: Вводный текст, name: intro, widget: text }
+          - label: Карточки продуктов
+            name: items
+            widget: list
+            summary: '{{fields.title}}'
+            fields:
+              - { label: Плашка (badge), name: badge, widget: string }
+              - { label: Название, name: title, widget: string }
+              - { label: Краткое описание, name: lead, widget: text }
+              - { label: Для кого, name: audience, widget: text }
+              - label: Что входит
+                name: points
+                widget: list
+                field: { label: Пункт, name: point, widget: string }
+              - { label: Цена, name: price, widget: string }
+              - { label: Ссылка на страницу продукта, name: url, widget: string, hint: 'Например: /products/samootsenka/' }
+              - { label: Текст кнопки, name: buyLabel, widget: string }
+
+      # ---- Процесс --------------------------------------------------------
+      - name: process
+        label: 7. Как проходит работа
+        file: src/_data/process.json
+        fields:
+          - { label: Надпись сверху, name: eyebrow, widget: string }
+          - { label: Заголовок, name: title, widget: string }
+          - label: Шаги
+            name: steps
+            widget: list
+            summary: '{{fields.title}}'
+            fields:
+              - { label: Заголовок шага, name: title, widget: string }
+              - { label: Описание, name: text, widget: text }
+
+      # ---- Отзывы ---------------------------------------------------------
+      - name: reviews
+        label: 8. Отзывы
+        file: src/_data/reviews.json
+        fields:
+          - { label: Заголовок, name: title, widget: string }
+          - label: Вкладки с отзывами
+            name: tabs
+            widget: list
+            summary: '{{fields.label}}'
+            fields:
+              - { label: ID вкладки, name: id, widget: string, hint: 'Латиницей, без пробелов. Например: reviews-online' }
+              - { label: Название вкладки, name: label, widget: string }
+              - { label: Компактный вид, name: compact, widget: boolean, default: false, required: false, hint: Для коротких отзывов. }
+              - { label: Активна по умолчанию, name: active, widget: boolean, default: false, required: false, hint: Отметьте только у ОДНОЙ вкладки. }
+              - label: Отзывы
+                name: items
+                widget: list
+                summary: '{{fields.name}} — {{fields.text}}'
+                fields:
+                  - { label: Имя (можно пусто), name: name, widget: string, required: false }
+                  - { label: Текст отзыва, name: text, widget: text }
+
+      # ---- FAQ ------------------------------------------------------------
+      - name: faq
+        label: 9. Вопросы и ответы
+        file: src/_data/faq.json
+        fields:
+          - { label: Надпись сверху, name: eyebrow, widget: string }
+          - { label: Заголовок, name: title, widget: string }
+          - label: Вопросы
+            name: items
+            widget: list
+            summary: '{{fields.question}}'
+            fields:
+              - { label: Вопрос, name: question, widget: string }
+              - { label: Ответ, name: answer, widget: text }
+              - { label: Раскрыт по умолчанию, name: open, widget: boolean, default: false, required: false }
+
+  # =========================================================================
+  #  НАСТРОЙКИ САЙТА
+  # =========================================================================
+  - name: site
+    label: Настройки сайта
+    description: Контакты, реквизиты, меню и SEO.
+    editor:
+      preview: false
+    files:
+      - name: site
+        label: Контакты, меню и SEO
+        file: src/_data/site.json
+        fields:
+          - label: Бренд
+            name: brand
+            widget: object
+            fields:
+              - { label: Имя, name: name, widget: string }
+              - { label: Подпись, name: tagline, widget: string }
+          - label: Контакты (ссылки)
+            name: contacts
+            widget: object
+            fields:
+              - { label: WhatsApp, name: whatsapp, widget: string }
+              - { label: Telegram (админ), name: telegramAdmin, widget: string }
+              - { label: Telegram (канал), name: telegramChannel, widget: string }
+              - { label: ВКонтакте, name: vk, widget: string }
+              - { label: YouTube, name: youtube, widget: string }
+              - { label: Instagram, name: instagram, widget: string }
+              - { label: B17, name: b17, widget: string }
+          - label: Реквизиты и документы
+            name: legal
+            widget: object
+            fields:
+              - { label: Юр. лицо, name: entity, widget: string }
+              - { label: ИНН, name: inn, widget: string }
+              - { label: Режим работы, name: hours, widget: string }
+              - label: Документы (ссылки внизу)
+                name: documents
+                widget: list
+                summary: '{{fields.label}}'
+                fields:
+                  - { label: Название, name: label, widget: string }
+                  - { label: Ссылка на файл, name: url, widget: string }
+          - label: Меню (навигация)
+            name: nav
+            widget: list
+            summary: '{{fields.label}}'
+            fields:
+              - { label: Пункт меню, name: label, widget: string }
+              - { label: Ссылка (якорь), name: href, widget: string, hint: 'Например: #services' }
+          - label: SEO по умолчанию
+            name: seo
+            widget: object
+            fields:
+              - { label: Заголовок вкладки, name: defaultTitle, widget: string }
+              - { label: Описание для поиска, name: defaultDescription, widget: text }
+              - { label: Картинка для соцсетей, name: ogImage, widget: image }
+
+  # =========================================================================
+  #  ОТДЕЛЬНЫЕ СТРАНИЦЫ (продукты и сертификаты)
+  # =========================================================================
+  - name: pages
+    label: Отдельные страницы
+    label_singular: Страница
+    description: Страницы продуктов и сертификатов.
+    editor:
+      preview: false
+    files:
+      # ---- Сертификаты ----------------------------------------------------
+      - name: certificates
+        label: Страница «Сертификаты»
+        file: src/certificates/certificates.json
+        fields:
+          - { label: Заголовок вкладки, name: title, widget: string }
+          - { label: Описание для поиска, name: description, widget: text }
+          - label: Содержимое страницы
+            name: page
+            widget: object
+            fields:
+              - { label: Надпись сверху, name: eyebrow, widget: string }
+              - { label: Заголовок, name: title, widget: string }
+              - { label: Вводный текст, name: lead, widget: text }
+              - label: Сертификаты (карточки)
+                name: items
+                widget: list
+                summary: '{{fields.alt}}'
+                fields:
+                  - { label: Изображение, name: src, widget: image }
+                  - { label: Описание (alt), name: alt, widget: string }
+                  - { label: Подпись (необязательно), name: caption, widget: string, required: false }
+
+      # ---- Продукт: вебинар «Самооценка» ---------------------------------
+      - name: product_samootsenka
+        label: Продукт «Вебинар Самооценка»
+        file: src/products/samootsenka/samootsenka.json
+        fields:
+          - { label: Заголовок вкладки, name: title, widget: string }
+          - { label: Описание для поиска, name: description, widget: text }
+          - { label: Описание для соцсетей, name: ogDescription, widget: text }
+          - label: Содержимое страницы
+            name: page
+            widget: object
+            fields:
+              - { label: Плашка (badge), name: badge, widget: string }
+              - { label: Название, name: name, widget: string }
+              - { label: Вводный текст, name: lead, widget: text }
+              - label: Факты (формат/длительность/цена)
+                name: facts
+                widget: list
+                summary: '{{fields.label}}: {{fields.value}}'
+                fields:
+                  - { label: Подпись, name: label, widget: string }
+                  - { label: Значение, name: value, widget: string }
+              - { label: Текст главной кнопки, name: primaryCta, widget: string }
+              - label: Для кого (аудитория)
+                name: audience
+                widget: object
+                fields:
+                  - { label: Вступление, name: intro, widget: string }
+                  - label: Пункты
+                    name: items
+                    widget: list
+                    field: { label: Пункт, name: item, widget: string }
+              - label: Что разберём внутри
+                name: inside
+                widget: object
+                fields:
+                  - { label: Заголовок, name: title, widget: string }
+                  - label: Пункты
+                    name: items
+                    widget: list
+                    field: { label: Пункт, name: item, widget: string }
+              - label: Бонусы
+                name: bonuses
+                widget: list
+                summary: '{{fields.title}}'
+                fields:
+                  - { label: Заголовок, name: title, widget: string }
+                  - { label: Текст, name: text, widget: text }
+              - label: Авторы
+                name: authors
+                widget: list
+                summary: '{{fields.name}}'
+                fields:
+                  - { label: Имя, name: name, widget: string }
+                  - { label: Роль, name: role, widget: string }
+              - label: Блок покупки
+                name: offer
+                widget: object
+                fields:
+                  - { label: Заголовок блока, name: title, widget: string }
+                  - label: Тарифы
+                    name: tiers
+                    widget: list
+                    summary: '{{fields.badge}} — {{fields.price}}'
+                    fields:
+                      - { label: Плашка тарифа, name: badge, widget: string }
+                      - { label: Цена, name: price, widget: string }
+                      - { label: Выделить тариф, name: featured, widget: boolean, default: false, required: false }
+                      - label: Что входит
+                        name: points
+                        widget: list
+                        field: { label: Пункт, name: point, widget: string }
+                      - { label: Текст кнопки, name: buyLabel, widget: string }
+                      - { label: Ссылка на оплату, name: buyUrl, widget: string }
+
+      # ---- Продукт: терапевтическая анкета --------------------------------
+      - name: product_anketa
+        label: Продукт «Терапевтическая анкета»
+        file: src/products/anketa/anketa.json
+        fields:
+          - { label: Заголовок вкладки, name: title, widget: string }
+          - { label: Описание для поиска, name: description, widget: text }
+          - { label: Описание для соцсетей, name: ogDescription, widget: text }
+          - label: Содержимое страницы
+            name: page
+            widget: object
+            fields:
+              - { label: Плашка (badge), name: badge, widget: string }
+              - { label: Название, name: name, widget: string }
+              - { label: Вводный текст, name: lead, widget: text }
+              - label: Факты
+                name: facts
+                widget: list
+                summary: '{{fields.label}}: {{fields.value}}'
+                fields:
+                  - { label: Подпись, name: label, widget: string }
+                  - { label: Значение, name: value, widget: string }
+              - { label: Текст главной кнопки, name: primaryCta, widget: string }
+              - label: Чем помогает
+                name: helps
+                widget: list
+                summary: '{{fields.title}}'
+                fields:
+                  - { label: Заголовок, name: title, widget: string }
+                  - { label: Текст, name: text, widget: text }
+              - label: Разбивка по периодам
+                name: periods
+                widget: object
+                fields:
+                  - { label: Заголовок, name: title, widget: string }
+                  - { label: Вступление, name: intro, widget: text }
+                  - label: Периоды
+                    name: items
+                    widget: list
+                    field: { label: Период, name: item, widget: string }
+              - label: Блок покупки
+                name: offer
+                widget: object
+                fields:
+                  - { label: Плашка, name: badge, widget: string }
+                  - { label: Заголовок блока, name: title, widget: string }
+                  - label: Что входит
+                    name: points
+                    widget: list
+                    field: { label: Пункт, name: point, widget: string }
+                  - { label: Цена, name: price, widget: string }
+                  - { label: Примечание к цене, name: priceNote, widget: string }
+                  - { label: Текст кнопки, name: buyLabel, widget: string }
+                  - { label: Ссылка на оплату, name: buyUrl, widget: string }
+                  - label: Доп. варианты (необязательно)
+                    name: supportOptions
+                    widget: list
+                    required: false
+                    field: { label: Вариант, name: option, widget: string }
+
+      # ---- Продукт: коррекционная программа -------------------------------
+      - name: product_programma
+        label: Продукт «Программа Самооценка»
+        file: src/products/programma-samootsenka/programma-samootsenka.json
+        fields:
+          - { label: Заголовок вкладки, name: title, widget: string }
+          - { label: Описание для поиска, name: description, widget: text }
+          - { label: Описание для соцсетей, name: ogDescription, widget: text }
+          - label: Содержимое страницы
+            name: page
+            widget: object
+            fields:
+              - { label: Плашка (badge), name: badge, widget: string }
+              - { label: Название, name: name, widget: string }
+              - { label: Вводный текст, name: lead, widget: text }
+              - label: Факты
+                name: facts
+                widget: list
+                summary: '{{fields.label}}: {{fields.value}}'
+                fields:
+                  - { label: Подпись, name: label, widget: string }
+                  - { label: Значение, name: value, widget: string }
+              - { label: Текст главной кнопки, name: primaryCta, widget: string }
+              - label: Для кого (аудитория)
+                name: audience
+                widget: object
+                fields:
+                  - { label: Вступление, name: intro, widget: string }
+                  - label: Пункты
+                    name: items
+                    widget: list
+                    field: { label: Пункт, name: item, widget: string }
+              - label: Чем помогает
+                name: helps
+                widget: list
+                summary: '{{fields.title}}'
+                fields:
+                  - { label: Заголовок, name: title, widget: string }
+                  - { label: Текст, name: text, widget: text }
+              - label: Блок покупки
+                name: offer
+                widget: object
+                fields:
+                  - { label: Плашка, name: badge, widget: string }
+                  - { label: Заголовок блока, name: title, widget: string }
+                  - label: Что входит
+                    name: points
+                    widget: list
+                    field: { label: Пункт, name: point, widget: string }
+                  - { label: Цена, name: price, widget: string }
+                  - { label: Примечание к цене, name: priceNote, widget: string }
+                  - { label: Текст кнопки, name: buyLabel, widget: string }
+                  - { label: Ссылка на оплату, name: buyUrl, widget: string }

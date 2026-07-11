@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Панель редактирования · Полина Вавилина</title>
+  </head>
+  <body>
+    <!--
+      Ручная инициализация нужна, чтобы подставить адрес OAuth-сервера автоматически
+      из текущего домена. Так панель работает и на *.vercel.app, и на своём домене
+      без правки config.yml.
+    -->
+    <script>
+      window.CMS_MANUAL_INIT = true;
+    </script>
+    <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
+    <script>
+      window.CMS.init({
+        load_config_file: true,
+        config: {
+          backend: {
+            base_url: window.location.origin,
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

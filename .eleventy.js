@@ -2,6 +2,8 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ assets: "assets" });
   eleventyConfig.addPassthroughCopy({ "styles.css": "styles.css" });
   eleventyConfig.addPassthroughCopy({ "script.js": "script.js" });
+  // Админ-панель (Sveltia CMS): копируем как есть, без обработки шаблонизатором.
+  eleventyConfig.addPassthroughCopy({ admin: "admin" });
 
   eleventyConfig.addFilter("json", (value) => JSON.stringify(value, null, 2));
 
