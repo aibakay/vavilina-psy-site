@@ -1923,6 +1923,50 @@ html.js [data-reveal].is-visible {
   font-weight: 800;
 }
 
+/* ============================================================
+   Синяя тема страницы «Терапевтическая анкета» (для специалистов).
+   Включается классом body.product-blue — остального сайта не касается.
+   ============================================================ */
+.product-blue {
+  --wine: #1f5ea8;
+  --wine-dark: #164a82;
+}
+
+.product-blue .button-primary {
+  box-shadow: 0 16px 35px rgba(31, 94, 168, 0.24);
+}
+
+.product-blue .button-secondary {
+  border-color: rgba(31, 94, 168, 0.24);
+}
+
+.product-blue .product-badge {
+  border-color: rgba(31, 94, 168, 0.2);
+  background: rgba(31, 94, 168, 0.08);
+}
+
+/* Заливной синий блок с белым текстом — как на референсе */
+.product-blue .pp-band {
+  background: linear-gradient(180deg, #1f5ea8 0%, #1a5493 100%);
+}
+
+.product-blue .pp-band h2,
+.product-blue .pp-band .pp-intro {
+  color: #fff;
+}
+
+.product-blue .pp-band .pp-intro {
+  opacity: 0.92;
+}
+
+.product-blue .pp-band .pp-checklist li {
+  color: #eaf1fa;
+}
+
+.product-blue .pp-band .pp-checklist li::before {
+  color: #fff;
+}
+
 .pp-bonus-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
