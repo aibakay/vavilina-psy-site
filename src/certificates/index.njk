@@ -1,0 +1,52 @@
+---
+layout: layout.njk
+---
+<header class="site-header pp-header" data-reveal>
+  <a class="brand" href="/" aria-label="На главную">
+    <span>{{ site.brand.name }}</span>
+    <small>{{ site.brand.tagline }}</small>
+  </a>
+  <div class="site-nav-back">
+    <a class="pp-back" href="/#trust">← На главную</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="section pp-hero" data-reveal>
+    <a class="pp-breadcrumb" href="/#trust">← О специалисте</a>
+    <span class="product-badge">{{ page.eyebrow }}</span>
+    <h1>{{ page.title }}</h1>
+    <p class="lead">{{ page.lead }}</p>
+  </section>
+
+  <section class="section pp-section" data-reveal>
+    {%- if page.items.length %}
+    <div class="cert-grid">
+      {%- for item in page.items %}
+      <figure class="cert-card" data-reveal>
+        <img src="{{ item.src }}" alt="{{ item.alt }}" loading="lazy" />
+        {%- if item.caption %}
+        <figcaption>{{ item.caption }}</figcaption>
+        {%- endif %}
+      </figure>
+      {%- endfor %}
+    </div>
+    {%- else %}
+    <p class="pp-intro">Сертификаты скоро появятся на этой странице.</p>
+    {%- endif %}
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div>
+    <strong>{{ site.brand.name }}</strong>
+    <p>{{ site.legal.entity }}</p>
+    <p>{{ site.legal.inn }}</p>
+    <p>{{ site.legal.hours }}</p>
+  </div>
+  <nav aria-label="Документы">
+    {%- for doc in site.legal.documents %}
+    <a href="{{ doc.url }}" target="_blank" rel="noopener noreferrer">{{ doc.label }}</a>
+    {%- endfor %}
+  </nav>
+</footer>

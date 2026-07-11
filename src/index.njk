@@ -141,6 +141,9 @@ jsonLd:
         {%- for paragraph in item.paragraphs %}
         <p>{{ paragraph }}</p>
         {%- endfor %}
+        {%- if item.link %}
+        <a class="trust-link" href="{{ item.link.href }}">{{ item.link.label }} →</a>
+        {%- endif %}
       </article>
       {%- endfor %}
     </div>

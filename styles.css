@@ -413,6 +413,19 @@ h3 {
   color: var(--muted);
 }
 
+.trust-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--wine);
+  font-size: 14px;
+  font-weight: 700;
+  transition: color 180ms ease;
+}
+
+.trust-link:hover {
+  color: var(--wine-dark);
+}
+
 .requests {
   display: grid;
   grid-template-columns: 0.75fr 1fr;
@@ -1965,6 +1978,39 @@ html.js [data-reveal].is-visible {
 
 .pp-buy .pp-intro {
   max-width: 720px;
+}
+
+.cert-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.cert-card {
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 250, 245, 0.72);
+  box-shadow: 0 12px 35px rgba(77, 43, 35, 0.06);
+}
+
+.cert-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.cert-card figcaption {
+  padding: 14px 18px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .cert-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .offer-card {
