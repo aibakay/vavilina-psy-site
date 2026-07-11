@@ -13,20 +13,27 @@ layout: layout.njk
 </header>
 
 <main id="top">
-  <section class="section pp-hero" data-reveal>
-    <a class="pp-breadcrumb" href="/#products">← Продукты и материалы</a>
-    <span class="product-badge">{{ page.badge }}</span>
-    <h1>{{ page.name }}</h1>
-    <p class="lead">{{ page.lead }}</p>
-    <div class="pp-facts">
-      {%- for fact in page.facts %}
-      <div class="pp-fact"><span>{{ fact.label }}</span><strong>{{ fact.value }}</strong></div>
-      {%- endfor %}
+  <section class="section pp-hero{% if page.heroImage %} pp-hero--split{% endif %}" data-reveal>
+    <div class="pp-hero-copy">
+      <a class="pp-breadcrumb" href="/#products">← Продукты и материалы</a>
+      <span class="product-badge">{{ page.badge }}</span>
+      <h1>{{ page.name }}</h1>
+      <p class="lead">{{ page.lead }}</p>
+      <div class="pp-facts">
+        {%- for fact in page.facts %}
+        <div class="pp-fact"><span>{{ fact.label }}</span><strong>{{ fact.value }}</strong></div>
+        {%- endfor %}
+      </div>
+      <div class="pp-actions">
+        <a class="button button-primary" href="#buy">{{ page.primaryCta }}</a>
+        <a class="button button-secondary" href="/#products">Другие продукты</a>
+      </div>
     </div>
-    <div class="pp-actions">
-      <a class="button button-primary" href="#buy">{{ page.primaryCta }}</a>
-      <a class="button button-secondary" href="/#products">Другие продукты</a>
+    {%- if page.heroImage %}
+    <div class="pp-hero-media">
+      <img src="{{ page.heroImage }}" alt="{{ page.name }}" width="941" height="1287" loading="eager" />
     </div>
+    {%- endif %}
   </section>
 
   <section class="section pp-section" data-reveal>
