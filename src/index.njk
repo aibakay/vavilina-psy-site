@@ -9,7 +9,8 @@ jsonLd:
   "@type": "ProfessionalService"
   name: "Полина Вавилина, клинический психолог"
   description: "Клинический психолог. Онлайн-консультации, психоаналитическая психотерапия, семейное и бизнес-консультирование."
-  image: "/assets/hero-portrait.jpg"
+  url: "https://vavilinaapollinaria-psy.ru/"
+  image: "https://vavilinaapollinaria-psy.ru/assets/hero-portrait.jpg"
   telephone: "+79787516745"
   priceRange: "1000-7000 RUB"
   areaServed: "RU"
@@ -325,3 +326,7 @@ jsonLd:
 <a class="mobile-sticky-cta" href="{{ site.contacts.whatsapp }}" target="_blank" rel="noopener noreferrer">
   Записаться
 </a>
+
+<script type="application/ld+json">
+  {{ faq.items | faqLd | json | safe }}
+</script>

@@ -95,3 +95,7 @@ bodyClass: product-blue
     {%- endfor %}
   </nav>
 </footer>
+
+<script type="application/ld+json">
+  {{ { name: page.name, description: description, image: (site.url + page.heroImage) if page.heroImage else null, price: page.offer.price, url: site.url + page.url } | productLd | json | safe }}
+</script>

@@ -5,18 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content="{{ description or site.seo.defaultDescription }}" />
     <title>{{ title or site.seo.defaultTitle }}</title>
+    <link rel="canonical" href="{{ site.url }}{{ page.url }}" />
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
 
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ru_RU" />
+    <meta property="og:url" content="{{ site.url }}{{ page.url }}" />
     <meta property="og:title" content="{{ title or site.seo.defaultTitle }}" />
     <meta property="og:description" content="{{ ogDescription or description or site.seo.defaultDescription }}" />
-    <meta property="og:image" content="{{ ogImage or site.seo.ogImage }}" />
+    <meta property="og:image" content="{{ (ogImage or site.seo.ogImage) | absUrl(site.url) }}" />
     <meta name="twitter:card" content="summary_large_image" />
     {%- if includeTwitterExtra %}
     <meta name="twitter:title" content="{{ title or site.seo.defaultTitle }}" />
     <meta name="twitter:description" content="{{ ogDescription or description or site.seo.defaultDescription }}" />
-    <meta name="twitter:image" content="{{ ogImage or site.seo.ogImage }}" />
+    <meta name="twitter:image" content="{{ (ogImage or site.seo.ogImage) | absUrl(site.url) }}" />
     {%- endif %}
 
     {%- if preloadImage %}

@@ -274,6 +274,7 @@ collections:
         label: Контакты, меню и SEO
         file: src/_data/site.json
         fields:
+          - { label: Адрес сайта (для SEO), name: url, widget: string, hint: 'Полный адрес с https и без слэша в конце, например https://vavilinaapollinaria-psy.ru' }
           - label: Бренд
             name: brand
             widget: object
