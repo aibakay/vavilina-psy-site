@@ -430,6 +430,7 @@ collections:
             fields:
               - { label: Плашка (badge), name: badge, widget: string }
               - { label: Название, name: name, widget: string }
+              - { label: Картинка в шапке, name: heroImage, widget: image, required: false, hint: Вертикальное изображение справа от заголовка. }
               - { label: Вводный текст, name: lead, widget: text }
               - label: Факты
                 name: facts

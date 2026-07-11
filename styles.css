@@ -1822,6 +1822,42 @@ html.js [data-reveal].is-visible {
   padding-bottom: 64px;
 }
 
+.pp-hero--split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.82fr);
+  align-items: center;
+  gap: 48px;
+}
+
+.pp-hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.pp-hero-media {
+  justify-self: end;
+}
+
+.pp-hero-media img {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+}
+
+@media (max-width: 860px) {
+  .pp-hero--split {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .pp-hero-media {
+    justify-self: center;
+    max-width: 320px;
+  }
+}
+
 .pp-hero h1 {
   margin: 16px 0 20px;
   font-size: clamp(38px, 6vw, 72px);
