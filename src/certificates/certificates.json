@@ -5,6 +5,12 @@
     "eyebrow": "Документы",
     "title": "Сертификаты и дипломы",
     "lead": "Образование, повышение квалификации и профессиональные сертификаты.",
-    "items": []
+    "items": [
+      {
+        "src": "/assets/EUMxCLfXyvWISW3K9PjipKpb3Bg0jd7cp8jvyNIAhvUqzVJ5mEVyefvx0qmBOKPBLQbeewvunTUaPKEEmwFWT_0g.jpg",
+        "alt": "123",
+        "caption": ""
+      }
+    ]
   }
 }
