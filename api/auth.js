@@ -96,14 +96,23 @@ function successPage(token, targetOrigin) {
     <script>
       (function () {
         var message = ${message};
-        var allowed = ${target};
+        var target = ${target};
+        var sent = false;
+        function send() {
+          if (sent || !window.opener) return;
+          sent = true;
+          window.opener.postMessage(message, target);
+        }
         function receive(e) {
-          if (allowed !== "*" && e.origin !== allowed) return;
-          window.opener && window.opener.postMessage(message, allowed === "*" ? e.origin : allowed);
+          if (target !== "*" && e.origin !== target) return;
+          send();
           window.removeEventListener("message", receive, false);
         }
+        // Штатный путь: CMS отвечает на рукопожатие — тогда отправляем токен.
         window.addEventListener("message", receive, false);
-        window.opener && window.opener.postMessage("authorizing:github", allowed);
+        if (window.opener) window.opener.postMessage("authorizing:github", target);
+        // Запасной путь: окно того же домена, адрес известен — отправляем напрямую.
+        setTimeout(send, 800);
       })();
     </script>
   </body>
