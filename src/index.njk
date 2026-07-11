@@ -85,6 +85,49 @@ jsonLd:
     </div>
   </section>
 
+  <section class="section products" id="products">
+    <div class="section-heading align-left" data-reveal>
+      <span>{{ products.eyebrow }}</span>
+      <h2>{{ products.title }}</h2>
+      <p>{{ products.intro }}</p>
+    </div>
+
+    <div class="product-grid">
+      {%- for item in products.items %}
+      <article class="product-card" data-reveal>
+        <span class="product-badge">{{ item.badge }}</span>
+        <h3>{{ item.title }}</h3>
+        <p class="product-lead">{{ item.lead }}</p>
+        <p class="product-audience"><strong>Кому подойдёт:</strong> {{ item.audience }}</p>
+        <ul class="product-points">
+          {%- for point in item.points %}
+          <li>{{ point }}</li>
+          {%- endfor %}
+        </ul>
+        <div class="product-foot">
+          <span class="product-price">{{ item.price }}</span>
+          <div class="product-actions">
+            <a class="button button-secondary" href="{{ item.url }}">Подробнее</a>
+            <a class="button button-primary" href="{{ item.url }}#buy">{{ item.buyLabel }}</a>
+          </div>
+        </div>
+      </article>
+      {%- endfor %}
+    </div>
+
+    <div class="product-choice" data-reveal>
+      <h3>{{ products.choice.title }}</h3>
+      <div class="product-choice-grid">
+        {%- for item in products.choice.items %}
+        <div>
+          <strong>{{ item.title }}</strong>
+          <p>{{ item.text }}</p>
+        </div>
+        {%- endfor %}
+      </div>
+    </div>
+  </section>
+
   <section class="section trust" id="trust">
     <div class="section-heading" data-reveal>
       <span>{{ trust.eyebrow }}</span>
@@ -155,49 +198,6 @@ jsonLd:
         {%- endfor %}
       </div>
     </details>
-  </section>
-
-  <section class="section products" id="products">
-    <div class="section-heading align-left" data-reveal>
-      <span>{{ products.eyebrow }}</span>
-      <h2>{{ products.title }}</h2>
-      <p>{{ products.intro }}</p>
-    </div>
-
-    <div class="product-grid">
-      {%- for item in products.items %}
-      <article class="product-card" data-reveal>
-        <span class="product-badge">{{ item.badge }}</span>
-        <h3>{{ item.title }}</h3>
-        <p class="product-lead">{{ item.lead }}</p>
-        <p class="product-audience"><strong>Кому подойдёт:</strong> {{ item.audience }}</p>
-        <ul class="product-points">
-          {%- for point in item.points %}
-          <li>{{ point }}</li>
-          {%- endfor %}
-        </ul>
-        <div class="product-foot">
-          <span class="product-price">{{ item.price }}</span>
-          <div class="product-actions">
-            <a class="button button-secondary" href="{{ item.url }}">Подробнее</a>
-            <a class="button button-primary" href="{{ item.url }}#buy">{{ item.buyLabel }}</a>
-          </div>
-        </div>
-      </article>
-      {%- endfor %}
-    </div>
-
-    <div class="product-choice" data-reveal>
-      <h3>{{ products.choice.title }}</h3>
-      <div class="product-choice-grid">
-        {%- for item in products.choice.items %}
-        <div>
-          <strong>{{ item.title }}</strong>
-          <p>{{ item.text }}</p>
-        </div>
-        {%- endfor %}
-      </div>
-    </div>
   </section>
 
   <section class="section about" id="about">
