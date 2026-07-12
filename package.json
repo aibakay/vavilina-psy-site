@@ -5,9 +5,16 @@
   "description": "Сайт Полины Вавилиной — сборка на 11ty из данных для будущей админ-панели",
   "scripts": {
     "build": "eleventy",
-    "start": "eleventy --serve"
+    "dev": "eleventy --serve",
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.0.0"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }
