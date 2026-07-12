@@ -2003,6 +2003,53 @@ html.js [data-reveal].is-visible {
   color: #fff;
 }
 
+/* ============================================================
+   Зелёная тема страницы «Самооценка и Я-концепция» (программа).
+   Включается классом body.product-green — остального сайта не касается.
+   #B7D9B1 — светлый пастельный тон, поэтому он используется как фон
+   акцентного блока, а для кнопок/текста берётся более тёмный зелёный
+   того же оттенка (иначе не хватает контраста для белого текста).
+   ============================================================ */
+.product-green {
+  --wine: #3c7133;
+  --wine-dark: #285021;
+}
+
+.product-green .button-primary {
+  box-shadow: 0 16px 35px rgba(60, 113, 51, 0.24);
+}
+
+.product-green .button-secondary {
+  border-color: rgba(60, 113, 51, 0.24);
+}
+
+.product-green .product-badge {
+  border-color: rgba(60, 113, 51, 0.22);
+  background: rgba(183, 217, 177, 0.45);
+}
+
+/* Заливной зелёный блок — #B7D9B1, как просили */
+.product-green .pp-band {
+  background: linear-gradient(180deg, #b7d9b1 0%, #a3cd9b 100%);
+}
+
+.product-green .pp-band h2,
+.product-green .pp-band .pp-intro {
+  color: var(--wine-dark);
+}
+
+.product-green .pp-band .pp-intro {
+  opacity: 0.85;
+}
+
+.product-green .pp-band .pp-checklist li {
+  color: #24401f;
+}
+
+.product-green .pp-band .pp-checklist li::before {
+  color: var(--wine-dark);
+}
+
 .pp-bonus-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
