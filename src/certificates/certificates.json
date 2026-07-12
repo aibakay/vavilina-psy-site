@@ -6,33 +6,141 @@
     "title": "Сертификаты и дипломы",
     "lead": "Образование, повышение квалификации и профессиональные сертификаты.",
     "items": [
-      { "src": "/assets/certificates/1.jpg", "alt": "Сертификат 1", "caption": "" },
-      { "src": "/assets/certificates/2.jpg", "alt": "Сертификат 2", "caption": "" },
-      { "src": "/assets/certificates/3.jpg", "alt": "Сертификат 3", "caption": "" },
-      { "src": "/assets/certificates/4.jpg", "alt": "Сертификат 4", "caption": "" },
-      { "src": "/assets/certificates/5.jpg", "alt": "Сертификат 5", "caption": "" },
-      { "src": "/assets/certificates/6.jpg", "alt": "Сертификат 6", "caption": "" },
-      { "src": "/assets/certificates/7.jpg", "alt": "Сертификат 7", "caption": "" },
-      { "src": "/assets/certificates/8.jpg", "alt": "Сертификат 8", "caption": "" },
-      { "src": "/assets/certificates/9.jpg", "alt": "Сертификат 9", "caption": "" },
-      { "src": "/assets/certificates/10.jpg", "alt": "Сертификат 10", "caption": "" },
-      { "src": "/assets/certificates/11.jpg", "alt": "Сертификат 11", "caption": "" },
-      { "src": "/assets/certificates/12.jpg", "alt": "Сертификат 12", "caption": "" },
-      { "src": "/assets/certificates/13.jpg", "alt": "Сертификат 13", "caption": "" },
-      { "src": "/assets/certificates/14.jpg", "alt": "Сертификат 14", "caption": "" },
-      { "src": "/assets/certificates/15.jpg", "alt": "Сертификат 15", "caption": "" },
-      { "src": "/assets/certificates/16.jpg", "alt": "Сертификат 16", "caption": "" },
-      { "src": "/assets/certificates/17.jpg", "alt": "Сертификат 17", "caption": "" },
-      { "src": "/assets/certificates/18.jpg", "alt": "Сертификат 18", "caption": "" },
-      { "src": "/assets/certificates/19.jpg", "alt": "Сертификат 19", "caption": "" },
-      { "src": "/assets/certificates/20.jpg", "alt": "Сертификат 20", "caption": "" },
-      { "src": "/assets/certificates/21.jpg", "alt": "Сертификат 21", "caption": "" },
-      { "src": "/assets/certificates/22.jpg", "alt": "Сертификат 22", "caption": "" },
-      { "src": "/assets/certificates/23.jpg", "alt": "Сертификат 23", "caption": "" },
-      { "src": "/assets/certificates/24.jpg", "alt": "Сертификат 24", "caption": "" },
-      { "src": "/assets/certificates/25.jpg", "alt": "Сертификат 25", "caption": "" },
-      { "src": "/assets/certificates/26.jpg", "alt": "Сертификат 26", "caption": "" },
-      { "src": "/assets/certificates/27.jpg", "alt": "Сертификат 27", "caption": "" }
+      {
+        "src": "/assets/certificates/17.jpg",
+        "alt": "Сертификат 17",
+        "caption": "Диплом о высшем психологическом образовании"
+      },
+      {
+        "src": "/assets/certificates/1.jpg",
+        "alt": "Сертификат 1",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/2.jpg",
+        "alt": "Сертификат 2",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/3.jpg",
+        "alt": "Сертификат 3",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/4.jpg",
+        "alt": "Сертификат 4",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/5.jpg",
+        "alt": "Сертификат 5",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/6.jpg",
+        "alt": "Сертификат 6",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/7.jpg",
+        "alt": "Сертификат 7",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/8.jpg",
+        "alt": "Сертификат 8",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/9.jpg",
+        "alt": "Сертификат 9",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/10.jpg",
+        "alt": "Сертификат 10",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/11.jpg",
+        "alt": "Сертификат 11",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/12.jpg",
+        "alt": "Сертификат 12",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/13.jpg",
+        "alt": "Сертификат 13",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/14.jpg",
+        "alt": "Сертификат 14",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/15.jpg",
+        "alt": "Сертификат 15",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/16.jpg",
+        "alt": "Сертификат 16",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/18.jpg",
+        "alt": "Сертификат 18",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/19.jpg",
+        "alt": "Сертификат 19",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/20.jpg",
+        "alt": "Сертификат 20",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/21.jpg",
+        "alt": "Сертификат 21",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/22.jpg",
+        "alt": "Сертификат 22",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/23.jpg",
+        "alt": "Сертификат 23",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/24.jpg",
+        "alt": "Сертификат 24",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/25.jpg",
+        "alt": "Сертификат 25",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/26.jpg",
+        "alt": "Сертификат 26",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/27.jpg",
+        "alt": "Сертификат 27",
+        "caption": ""
+      }
     ]
   }
 }
