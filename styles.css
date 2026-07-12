@@ -2050,6 +2050,52 @@ html.js [data-reveal].is-visible {
   color: var(--wine-dark);
 }
 
+/* ============================================================
+   Оранжевая тема страницы «Эскалация гнева» (вебинар).
+   Включается классом body.product-orange — остального сайта не касается.
+   #E75B12 — основной цвет (кнопки, бейджи, акценты, заливной блок).
+   --wine-dark берётся темнее того же тона для контраста в тексте.
+   ============================================================ */
+.product-orange {
+  --wine: #e75b12;
+  --wine-dark: #b8460c;
+}
+
+.product-orange .button-primary {
+  box-shadow: 0 16px 35px rgba(231, 91, 18, 0.28);
+}
+
+.product-orange .button-secondary {
+  border-color: rgba(231, 91, 18, 0.28);
+}
+
+.product-orange .product-badge {
+  border-color: rgba(231, 91, 18, 0.24);
+  background: rgba(231, 91, 18, 0.1);
+}
+
+/* Заливной оранжевый блок с белым текстом — в тон обложке вебинара */
+.product-orange .pp-band {
+  background: linear-gradient(180deg, #e75b12 0%, #cf4f0d 100%);
+}
+
+.product-orange .pp-band h2,
+.product-orange .pp-band .pp-intro {
+  color: #fff;
+}
+
+.product-orange .pp-band .pp-intro {
+  opacity: 0.92;
+}
+
+.product-orange .pp-band .pp-checklist li {
+  color: #fff2ea;
+}
+
+.product-orange .pp-band .pp-checklist li::before {
+  color: #fff;
+}
+
 .pp-bonus-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

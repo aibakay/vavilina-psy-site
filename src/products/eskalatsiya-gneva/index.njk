@@ -1,0 +1,98 @@
+---
+layout: layout.njk
+bodyClass: product-orange
+---
+<header class="site-header pp-header" data-reveal>
+  <a class="brand" href="/" aria-label="На главную">
+    <span>{{ site.brand.name }}</span>
+    <small>{{ site.brand.tagline }}</small>
+  </a>
+  <div class="site-nav-back">
+    <a class="pp-back" href="/#products">← Все продукты</a>
+    <a class="nav-cta" href="#buy">Купить</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="section pp-hero{% if page.heroImage %} pp-hero--split{% endif %}" data-reveal>
+    <div class="pp-hero-copy">
+      <a class="pp-breadcrumb" href="/#products">← Продукты и материалы</a>
+      <span class="product-badge">{{ page.badge }}</span>
+      <h1>{{ page.name }}</h1>
+      <p class="lead">{{ page.lead }}</p>
+      <div class="pp-facts">
+        {%- for fact in page.facts %}
+        <div class="pp-fact"><span>{{ fact.label }}</span><strong>{{ fact.value }}</strong></div>
+        {%- endfor %}
+      </div>
+      <div class="pp-actions">
+        <a class="button button-primary" href="#buy">{{ page.primaryCta }}</a>
+        <a class="button button-secondary" href="/#products">Другие продукты</a>
+      </div>
+    </div>
+    {%- if page.heroImage %}
+    <div class="pp-hero-media">
+      <img src="{{ page.heroImage }}" alt="{{ page.name }}" width="1064" height="647" loading="eager" />
+    </div>
+    {%- endif %}
+  </section>
+
+  <section class="section pp-section" data-reveal>
+    <h2>{{ page.inside.title }}</h2>
+    <ul class="pp-checklist">
+      {%- for item in page.inside.items %}
+      <li>{{ item }}</li>
+      {%- endfor %}
+    </ul>
+  </section>
+
+  <section class="pp-section pp-band" data-reveal>
+    <h2>{{ page.bonus.title }}</h2>
+    <p class="pp-intro">{{ page.bonus.intro }}</p>
+    <ul class="pp-checklist">
+      {%- for item in page.bonus.items %}
+      <li>{{ item }}</li>
+      {%- endfor %}
+    </ul>
+  </section>
+
+  <section class="section pp-buy" id="buy" data-reveal>
+    <h2>Забрать вебинар</h2>
+    <div class="offer-card">
+      <div class="offer-main">
+        <span class="product-badge">{{ page.offer.badge }}</span>
+        <h3>{{ page.offer.title }}</h3>
+        <ul class="offer-list">
+          {%- for point in page.offer.points %}
+          <li>{{ point }}</li>
+          {%- endfor %}
+        </ul>
+      </div>
+      <div class="offer-cta">
+        <span class="offer-label">Стоимость</span>
+        <p class="offer-price">{{ page.offer.price }}</p>
+        <p class="offer-price-note">{{ page.offer.priceNote }}</p>
+        <a class="button button-primary" href="{{ page.offer.buyUrl }}" target="_blank" rel="noopener noreferrer">{{ page.offer.buyLabel }}</a>
+      </div>
+    </div>
+    <p class="pp-note">Материал защищён авторским правом</p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div>
+    <strong>{{ site.brand.name }}</strong>
+    <p>{{ site.legal.entity }}</p>
+    <p>{{ site.legal.inn }}</p>
+    <p>{{ site.legal.hours }}</p>
+  </div>
+  <nav aria-label="Документы">
+    {%- for doc in site.legal.documents %}
+    <a href="{{ doc.url }}" target="_blank" rel="noopener noreferrer">{{ doc.label }}</a>
+    {%- endfor %}
+  </nav>
+</footer>
+
+<script type="application/ld+json">
+  {{ { name: page.name, description: description, image: (site.url + page.heroImage) if page.heroImage else null, price: page.offer.price, url: site.url + page.url } | productLd | json | safe }}
+</script>
