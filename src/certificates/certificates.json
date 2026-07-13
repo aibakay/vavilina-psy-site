@@ -122,8 +122,18 @@
         "caption": ""
       },
       {
+        "src": "/assets/certificates/27.jpg",
+        "alt": "Сертификат 23",
+        "caption": ""
+      },
+      {
         "src": "/assets/certificates/9.jpg",
         "alt": "Сертификат 16",
+        "caption": ""
+      },
+      {
+        "src": "/assets/certificates/6.jpg",
+        "alt": "Сертификат 30",
         "caption": ""
       },
       {
@@ -147,11 +157,6 @@
         "caption": ""
       },
       {
-        "src": "/assets/certificates/27.jpg",
-        "alt": "Сертификат 23",
-        "caption": ""
-      },
-      {
         "src": "/assets/certificates/18.jpg",
         "alt": "Сертификат 26",
         "caption": ""
@@ -159,11 +164,6 @@
       {
         "src": "/assets/certificates/20.jpg",
         "alt": "Сертификат 27",
-        "caption": ""
-      },
-      {
-        "src": "/assets/certificates/6.jpg",
-        "alt": "Сертификат 30",
         "caption": ""
       }
     ]
