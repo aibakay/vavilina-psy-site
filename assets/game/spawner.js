@@ -24,11 +24,11 @@ const C = {
 
 // jump: перепрыгнуть (низкое, на земле). duck: пригнуться (высокое, с зазором).
 const OBSTACLES = {
-  stack: { action: "jump", w: 0.85, h: 0.5, label: "Стопка дел" },
-  notifications: { action: "jump", w: 1.05, h: 0.42, label: "Уведомления" },
-  deadline: { action: "jump", w: 0.55, h: 0.64, label: "Дедлайн" },
-  cloud: { action: "duck", w: 1.4, gap: 0.54, h: 0.55, label: "Облако мыслей" },
-  should: { action: "duck", w: 1.15, gap: 0.52, h: 0.42, label: "«Ты должен»" },
+  stack: { action: "jump", w: 0.5, h: 0.42, label: "Стопка дел" },
+  notifications: { action: "jump", w: 0.6, h: 0.34, label: "Уведомления" },
+  deadline: { action: "jump", w: 0.4, h: 0.52, label: "Дедлайн" },
+  cloud: { action: "duck", w: 0.9, gap: 0.55, h: 0.5, label: "Облако мыслей" },
+  should: { action: "duck", w: 0.8, gap: 0.55, h: 0.4, label: "«Ты должен»" },
 };
 
 const OBSTACLE_KINDS = Object.keys(OBSTACLES);
@@ -103,23 +103,23 @@ export class Spawner {
   reset() {
     // Дистанция (в px), которую мир проехал с прошлого спавна.
     this.distanceSinceObstacle = 0;
-    this.nextGap = this._computeGap(0);
+    this.nextGap = this._computeGap(CONFIG.world.baseSpeed);
     this.lastAction = null;
   }
 
-  _computeGap(speedNorm) {
+  // Дистанция от текущей скорости — время реакции постоянно на любом темпе.
+  _computeGap(speed) {
     const s = CONFIG.spawn;
-    const base = s.minGapPx + (s.minGapPxFast - s.minGapPx) * speedNorm;
-    return base + Math.random() * s.gapRandomPx;
+    return Math.max(s.minGapPx, speed * (s.minGapSec + Math.random() * s.gapRandomSec));
   }
 
   // Вызывается каждый кадр. Возвращает массив новых сущностей (0..2).
-  update(movedPx, speedNorm, viewWidth) {
+  update(movedPx, speed, viewWidth) {
     this.distanceSinceObstacle += movedPx;
     if (this.distanceSinceObstacle < this.nextGap) return [];
 
     this.distanceSinceObstacle = 0;
-    this.nextGap = this._computeGap(speedNorm);
+    this.nextGap = this._computeGap(speed);
 
     const spawned = [];
     const spawnX = viewWidth + 40;
@@ -138,7 +138,7 @@ export class Spawner {
       // Высота: точка опоры бывает и низкой, и в прыжке; редкие — в прыжке.
       const heightFactor =
         bonusKind === "foothold" ? pick([0.35, 0.7, 1.05]) : pick([0.8, 1.05]);
-      spawned.push(createBonus(bonusKind, spawnX - CONFIG.spawn.minGapPx * 0.55, heightFactor));
+      spawned.push(createBonus(bonusKind, spawnX - CONFIG.spawn.bonusLeadPx, heightFactor));
     }
 
     return spawned;

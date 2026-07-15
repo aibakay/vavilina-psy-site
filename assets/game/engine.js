@@ -185,9 +185,13 @@ export class Runner {
     this.elapsed = 0;
     this.footholds = 0;
     this.breathingTimer = 0;
+    this.hitSlowTimer = 0;
 
     this.state = "playing";
     this.hud.setState("playing");
+    // Фокус на игровое поле: после клика по кнопке «Начать» клавиатура
+    // (Space/стрелки) должна сразу управлять игрой.
+    this.canvas.focus({ preventScroll: true });
     track(GOALS.started);
 
     this.lastTime = performance.now();
@@ -315,6 +319,11 @@ export class Runner {
       this.breathingTimer = Math.max(0, this.breathingTimer - dt);
       slow = CONFIG.world.breathingSlowFactor;
     }
+    // Короткое замедление после столкновения — ощутимый «сбой ритма».
+    if (this.hitSlowTimer > 0) {
+      this.hitSlowTimer = Math.max(0, this.hitSlowTimer - dt);
+      slow = Math.min(slow, CONFIG.player.hitSlowFactor);
+    }
 
     const movedPx = this.speed * slow * dt;
     this.distancePx += movedPx;
@@ -326,10 +335,8 @@ export class Runner {
     for (const e of this.entities) e.x -= movedPx;
     this.entities = this.entities.filter((e) => e.x > -300);
 
-    // Спавним новые.
-    const speedNorm =
-      (this.speed - CONFIG.world.baseSpeed) / (CONFIG.world.maxSpeed - CONFIG.world.baseSpeed);
-    const created = this.spawner.update(movedPx, Math.max(0, Math.min(1, speedNorm)), this.metrics.viewWidth);
+    // Спавним новые (дистанция считается от фактической скорости мира).
+    const created = this.spawner.update(movedPx, this.speed * slow, this.metrics.viewWidth);
     if (created.length) this.entities.push(...created);
 
     this._handleCollisions();
@@ -360,7 +367,7 @@ export class Runner {
             this.resource - CONFIG.resource.collisionDamage
           );
           this.player.applyKnockback();
-          this.speed *= CONFIG.player.knockbackFactor;
+          this.hitSlowTimer = CONFIG.player.hitSlowDuration;
           this.sound.hit();
         }
       } else if (e.type === "bonus" && !e.collected) {
@@ -488,8 +495,7 @@ export class Runner {
     ctx.globalAlpha = alpha;
 
     const img = this._currentSprite(idle);
-    const crouch = !idle && player.state === "slide";
-    this.sprites.draw(ctx, img, footX, footY, m.standHeight, { crouch });
+    this.sprites.draw(ctx, img, footX, footY, m.standHeight);
     ctx.restore();
   }
 

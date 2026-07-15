@@ -40,26 +40,22 @@ export class SpriteSet {
   }
 
   // Рисует спрайт с привязкой к «ногам» (footX, footY — точка опоры на земле).
-  // standHeight — целевая видимая высота стойки в логических px.
-  draw(ctx, image, footX, footY, standHeight, { crouch = false } = {}) {
-    if (!image) return { width: 0, height: standHeight };
-
-    let drawH;
-    let drawW;
-    if (crouch) {
-      // Тот же «масштаб пикселей», что и у бегового кадра, → естественный присед.
-      const unit = standHeight / RUN_REFERENCE_HEIGHT;
-      drawH = image.naturalHeight * unit;
-      drawW = image.naturalWidth * unit;
-    } else {
-      // Стоячие кадры: приводим к одинаковой видимой высоте.
-      drawH = standHeight;
-      drawW = standHeight * (image.naturalWidth / image.naturalHeight);
-    }
-
-    const x = Math.round(footX - drawW / 2);
-    const y = Math.round(footY - drawH);
-    ctx.drawImage(image, x, y, Math.round(drawW), Math.round(drawH));
-    return { width: drawW, height: drawH };
+  // Все кадры рисуются в ЕДИНОМ масштабе (px спрайта → px экрана), а не
+  // растягиваются до одной высоты: кадры бега имеют разные размеры PNG,
+  // и нормализация по высоте заставляла персонажа «пульсировать» шириной.
+  // Единый масштаб сохраняет постоянный размер фигуры, а разница высот
+  // кадров — это естественная разница поз (наклон в беге, присед в подкате).
+  draw(ctx, image, footX, footY, standHeight) {
+    if (!image) return;
+    const unit = standHeight / RUN_REFERENCE_HEIGHT;
+    const drawH = image.naturalHeight * unit;
+    const drawW = image.naturalWidth * unit;
+    ctx.drawImage(
+      image,
+      Math.round(footX - drawW / 2),
+      Math.round(footY - drawH),
+      Math.round(drawW),
+      Math.round(drawH)
+    );
   }
 }

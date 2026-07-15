@@ -16,6 +16,7 @@ export class Player {
     this.invulnerable = 0; // сек оставшейся неуязвимости
     this.shielded = false; // активный бонус «Границы»
     this.runTime = 0; // для анимации бегового цикла
+    this.wantSlide = false; // подкат «заказан» в воздухе — выполнится при приземлении
   }
 
   get onGround() {
@@ -28,6 +29,7 @@ export class Player {
     this.state = "jump";
     this.vy = CONFIG.player.jumpVelocity;
     this.slideTimer = 0;
+    this.wantSlide = false;
     sound?.jump();
     return true;
   }
@@ -38,19 +40,17 @@ export class Player {
       this.slideTimer = CONFIG.player.slideDuration;
       return false;
     }
-    if (this.state === "jump" && this.y > 4) {
-      // В воздухе — быстрое опускание (ускоренный присед при приземлении).
-      this.vy = Math.max(this.vy, 260);
+    if (this.state === "jump") {
+      // В воздухе персонаж не телепортируется вниз: ускоряем падение,
+      // а подкат начнётся в момент приземления.
+      this.vy = Math.max(this.vy, 900);
+      this.wantSlide = true;
+      return false;
     }
-    if (this.onGround || this.state === "jump") {
-      this.state = "slide";
-      this.slideTimer = CONFIG.player.slideDuration;
-      this.y = 0;
-      this.vy = 0;
-      sound?.slide?.();
-      return true;
-    }
-    return false;
+    this.state = "slide";
+    this.slideTimer = CONFIG.player.slideDuration;
+    sound?.slide?.();
+    return true;
   }
 
   applyKnockback() {
@@ -79,7 +79,13 @@ export class Player {
       if (this.y <= 0) {
         this.y = 0;
         this.vy = 0;
-        this.state = "run";
+        if (this.wantSlide) {
+          this.wantSlide = false;
+          this.state = "slide";
+          this.slideTimer = CONFIG.player.slideDuration;
+        } else {
+          this.state = "run";
+        }
       }
     } else if (this.state === "slide") {
       this.slideTimer -= dt;

@@ -56,6 +56,10 @@ export class SoundManager {
     this._tone({ type: "sine", from: 420, to: 720, duration: 0.16, gain: 0.05 });
   }
 
+  slide() {
+    this._tone({ type: "sine", from: 300, to: 220, duration: 0.12, gain: 0.04 });
+  }
+
   bonus() {
     this._tone({ type: "triangle", from: 660, to: 990, duration: 0.18, gain: 0.05 });
   }

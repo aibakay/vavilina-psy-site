@@ -22,6 +22,7 @@ export class Background {
     this.offFar = 0;
     this.offNear = 0;
     this.offFog = 0;
+    this.offGround = 0;
     // Заранее сгенерированные силуэты холмов/деревьев (стабильная форма).
     this.farHills = this._makeHills(9, 0.45);
     this.nearTrees = this._makeTrees(7);
@@ -55,8 +56,11 @@ export class Background {
   update(movedPx) {
     const factor = this.reducedMotion ? 0.15 : 1;
     this.offFar = (this.offFar + movedPx * 0.12 * factor) % 100000;
-    this.offNear = (this.offNear + movedPx * 0.35 * factor) % 100000;
+    this.offNear = (this.offNear + movedPx * 0.5 * factor) % 100000;
     this.offFog = (this.offFog + movedPx * 0.06 * factor) % 100000;
+    // Земля движется с полной скоростью мира — главный визуальный сигнал бега.
+    // Не ослабляется при reduced-motion: без него непонятна сама механика.
+    this.offGround = (this.offGround + movedPx) % 100000;
   }
 
   // resourceNorm: 0..1. Управляет светлотой фона.
@@ -89,6 +93,26 @@ export class Background {
     ctx.moveTo(0, groundY + 1);
     ctx.lineTo(W, groundY + 1);
     ctx.stroke();
+
+    // Бегущие отметины на земле — без них персонаж кажется стоящим на месте.
+    this._drawGroundMarks(ctx, W, Hpx, groundY);
+  }
+
+  _drawGroundMarks(ctx, W, Hpx, groundY) {
+    const gh = Hpx - groundY;
+    const spacing = 90;
+
+    let off = this.offGround % spacing;
+    ctx.fillStyle = "rgba(115, 24, 23, 0.12)";
+    for (let x = -off; x < W + spacing; x += spacing) {
+      ctx.fillRect(x, groundY + gh * 0.38, 32, 3);
+    }
+
+    off = (this.offGround + spacing * 0.5) % spacing;
+    ctx.fillStyle = "rgba(115, 115, 90, 0.2)";
+    for (let x = -off; x < W + spacing; x += spacing) {
+      ctx.fillRect(x + 18, groundY + gh * 0.68, 16, 3);
+    }
   }
 
   _drawHills(ctx, W, groundY, off) {
