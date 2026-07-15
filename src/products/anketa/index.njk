@@ -50,20 +50,24 @@ bodyClass: product-blue
   </section>
 
   <section class="pp-section pp-band{% if page.periods.image %} pp-band--media{% endif %}" data-reveal>
-    <h2>{{ page.periods.title }}</h2>
-    <p class="pp-intro">{{ page.periods.intro }}</p>
     {%- if page.periods.image %}
     <div class="pp-periods-row">
-      <ul class="pp-checklist">
-        {%- for item in page.periods.items %}
-        <li>{{ item }}</li>
-        {%- endfor %}
-      </ul>
+      <div class="pp-periods-copy">
+        <h2>{{ page.periods.title }}</h2>
+        <p class="pp-intro">{{ page.periods.intro }}</p>
+        <ul class="pp-checklist">
+          {%- for item in page.periods.items %}
+          <li>{{ item }}</li>
+          {%- endfor %}
+        </ul>
+      </div>
       <div class="pp-periods-media">
         <img src="{{ page.periods.image }}" alt="{{ page.periods.title }}" loading="lazy" />
       </div>
     </div>
     {%- else %}
+    <h2>{{ page.periods.title }}</h2>
+    <p class="pp-intro">{{ page.periods.intro }}</p>
     <ul class="pp-checklist">
       {%- for item in page.periods.items %}
       <li>{{ item }}</li>
