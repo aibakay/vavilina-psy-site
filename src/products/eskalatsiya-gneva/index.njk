@@ -94,5 +94,5 @@ bodyClass: product-orange
 </footer>
 
 <script type="application/ld+json">
-  {{ { name: page.name, description: description, image: (site.url + page.heroImage) if page.heroImage else null, price: page.offer.price, url: site.url + page.url } | productLd | json | safe }}
+  {{ { name: page.name, description: description, image: (site.url + page.heroImage) if page.heroImage else null, price: page.offer.price, url: site.url + page.url } | productLd | ldjson | safe }}
 </script>

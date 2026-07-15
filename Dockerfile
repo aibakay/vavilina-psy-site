@@ -14,5 +14,8 @@ COPY server.js ./
 COPY api ./api
 COPY --from=build /app/_site ./_site
 
+# Не работаем от root: пользователь node есть в образе node:20-alpine.
+USER node
+
 EXPOSE 3000
 CMD ["node", "server.js"]

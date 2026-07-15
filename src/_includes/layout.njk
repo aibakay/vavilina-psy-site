@@ -34,7 +34,7 @@
     <script>document.documentElement.classList.add("js");</script>
     {%- if jsonLd %}
     <script type="application/ld+json">
-      {{ jsonLd | json | safe }}
+      {{ jsonLd | ldjson | safe }}
     </script>
     {%- endif %}
     {%- if site.analytics.yandexMetrika %}
