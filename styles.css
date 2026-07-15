@@ -1968,6 +1968,11 @@ html.js [data-reveal].is-visible {
   align-items: center;
 }
 
+/* Анкета: даём картинке больше места */
+.pp-periods-row {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 460px);
+}
+
 .pp-periods-row .pp-checklist {
   grid-template-columns: 1fr;
   gap: 14px;
@@ -1990,6 +1995,10 @@ html.js [data-reveal].is-visible {
   max-height: 460px;
   height: auto;
   filter: drop-shadow(0 18px 42px rgba(0, 0, 0, 0.28));
+}
+
+.pp-periods-media img {
+  max-height: 640px;
 }
 
 @media (max-width: 768px) {
