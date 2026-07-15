@@ -552,3 +552,61 @@ collections:
                   - { label: Примечание к цене, name: priceNote, widget: string }
                   - { label: Текст кнопки, name: buyLabel, widget: string }
                   - { label: Ссылка на оплату, name: buyUrl, widget: string }
+
+      # ---- Продукт: вебинар «Эскалация гнева» -----------------------------
+      - name: product_eskalatsiya
+        label: Продукт «Вебинар Эскалация гнева»
+        file: src/products/eskalatsiya-gneva/eskalatsiya-gneva.json
+        fields:
+          - { label: Заголовок вкладки, name: title, widget: string }
+          - { label: Описание для поиска, name: description, widget: text }
+          - { label: Описание для соцсетей, name: ogDescription, widget: text }
+          - label: Содержимое страницы
+            name: page
+            widget: object
+            fields:
+              - { label: Плашка (badge), name: badge, widget: string }
+              - { label: Название, name: name, widget: string }
+              - { label: Картинка в шапке, name: heroImage, widget: image, required: false, hint: Вертикальное изображение справа от заголовка. }
+              - { label: Вводный текст, name: lead, widget: text }
+              - label: Факты (формат/длительность/цена)
+                name: facts
+                widget: list
+                summary: '{{fields.label}}: {{fields.value}}'
+                fields:
+                  - { label: Подпись, name: label, widget: string }
+                  - { label: Значение, name: value, widget: string }
+              - { label: Текст главной кнопки, name: primaryCta, widget: string }
+              - label: Что разберём внутри
+                name: inside
+                widget: object
+                fields:
+                  - { label: Заголовок, name: title, widget: string }
+                  - label: Пункты
+                    name: items
+                    widget: list
+                    field: { label: Пункт, name: item, widget: string }
+              - label: Бонус (чек-лист)
+                name: bonus
+                widget: object
+                fields:
+                  - { label: Заголовок, name: title, widget: string }
+                  - { label: Вступление, name: intro, widget: text }
+                  - label: Пункты
+                    name: items
+                    widget: list
+                    field: { label: Пункт, name: item, widget: string }
+              - label: Блок покупки
+                name: offer
+                widget: object
+                fields:
+                  - { label: Плашка, name: badge, widget: string }
+                  - { label: Заголовок блока, name: title, widget: string }
+                  - label: Что входит
+                    name: points
+                    widget: list
+                    field: { label: Пункт, name: point, widget: string }
+                  - { label: Цена, name: price, widget: string }
+                  - { label: Примечание к цене, name: priceNote, widget: string }
+                  - { label: Текст кнопки, name: buyLabel, widget: string }
+                  - { label: Ссылка на оплату, name: buyUrl, widget: string }
