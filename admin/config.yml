@@ -473,6 +473,7 @@ collections:
                 fields:
                   - { label: Заголовок, name: title, widget: string }
                   - { label: Вступление, name: intro, widget: text }
+                  - { label: Картинка справа, name: image, widget: image, required: false, hint: Изображение справа от списка периодов. }
                   - label: Периоды
                     name: items
                     widget: list
@@ -536,6 +537,7 @@ collections:
                 fields:
                   - { label: Заголовок, name: title, widget: string }
                   - { label: Текст, name: text, widget: text }
+              - { label: Картинка справа (как проходит программа), name: processImage, widget: image, required: false, hint: Изображение справа от карточек «Как проходит программа». }
               - label: Блок покупки
                 name: offer
                 widget: object

@@ -40,8 +40,23 @@ bodyClass: product-green
     </ul>
   </section>
 
-  <section class="pp-section pp-band" data-reveal>
+  <section class="pp-section pp-band{% if page.processImage %} pp-band--media{% endif %}" data-reveal>
     <h2>Как проходит программа</h2>
+    {%- if page.processImage %}
+    <div class="pp-process-row">
+      <div class="pp-bonus-grid">
+        {%- for item in page.helps %}
+        <div class="pp-bonus">
+          <strong>{{ item.title }}</strong>
+          <p>{{ item.text }}</p>
+        </div>
+        {%- endfor %}
+      </div>
+      <div class="pp-process-media">
+        <img src="{{ page.processImage }}" alt="Как проходит программа" loading="lazy" />
+      </div>
+    </div>
+    {%- else %}
     <div class="pp-bonus-grid">
       {%- for item in page.helps %}
       <div class="pp-bonus">
@@ -50,6 +65,7 @@ bodyClass: product-green
       </div>
       {%- endfor %}
     </div>
+    {%- endif %}
   </section>
 
   <section class="section pp-buy" id="buy" data-reveal>
