@@ -1,0 +1,117 @@
+{# Мини-игра «В своём ритме» — эндлесс-раннер как метафора нагрузки и восстановления. #}
+{# Разметка семантическая и доступная; логика — в /assets/game/*.js (ES-модули). #}
+<section class="section runner-section" id="rhythm-game" aria-labelledby="runner-heading">
+  <div class="section-heading" data-reveal>
+    <span>Пауза и опора</span>
+    <h2 id="runner-heading">В своём ритме</h2>
+    <p>Небольшая передышка: маленькая игра-метафора о том, как сохранять ресурс, а не бежать быстрее.</p>
+  </div>
+
+  <div
+    class="runner"
+    data-runner
+    data-ym-id="{{ site.analytics.yandexMetrika }}"
+    data-reveal
+  >
+    <div class="runner-stage" data-state="loading">
+      <canvas
+        class="runner-canvas"
+        tabindex="0"
+        role="img"
+        aria-label="Игровое поле: персонаж бежит вправо, избегая препятствий и собирая точки опоры"
+      ></canvas>
+
+      {# Живой счёт #}
+      <div class="runner-hud" aria-live="off">
+        <div class="runner-hud-row">
+          <span class="runner-stat"><small>Путь</small><b data-hud="distance">0 м</b></span>
+          <span class="runner-stat"><small>Точки опоры</small><b data-hud="footholds">0</b></span>
+        </div>
+        <div class="runner-resource" role="progressbar" aria-label="Ресурс" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+          <small>Ресурс <b data-hud="resource-value">100%</b></small>
+          <span class="runner-resource-track"><span class="runner-resource-bar" data-hud="resource-bar" style="width:100%"></span></span>
+        </div>
+        <span class="runner-active-bonus" data-hud="active-bonus" hidden></span>
+      </div>
+
+      {# Кнопка звука #}
+      <div class="runner-controls">
+        <button type="button" class="runner-sound" data-action="sound" aria-pressed="false" aria-label="Включить звук">♪̶</button>
+        <button type="button" class="runner-pause-btn" data-action="pause" aria-label="Пауза">II</button>
+      </div>
+
+      {# Экранные кнопки для касаний #}
+      <div class="runner-touch" aria-hidden="false">
+        <button type="button" class="runner-touch-btn" data-action="jump" aria-label="Прыжок">Прыжок</button>
+        <button type="button" class="runner-touch-btn" data-action="slide" aria-label="Пригнуться">Пригнуться</button>
+      </div>
+
+      {# Мягкая всплывающая фраза #}
+      <p class="runner-toast" data-hud="toast" aria-live="polite"></p>
+
+      {# Оверлей: старт #}
+      <div class="runner-overlay" data-overlay="intro" hidden>
+        <div class="runner-panel">
+          <h3>В своём ритме</h3>
+          <p>Не обязательно бежать быстрее. Попробуй сохранить свой ресурс.</p>
+          <button type="button" class="button button-primary" data-action="start">Начать</button>
+          <p class="runner-hint">Space / ↑ — прыжок · ↓ — подкат · Enter — старт · Esc — пауза</p>
+        </div>
+      </div>
+
+      {# Оверлей: пауза #}
+      <div class="runner-overlay" data-overlay="paused" hidden>
+        <div class="runner-panel">
+          <h3>Пауза</h3>
+          <p>Можно перевести дыхание.</p>
+          <button type="button" class="button button-primary" data-action="resume">Продолжить</button>
+        </div>
+      </div>
+
+      {# Оверлей: завершение #}
+      <div class="runner-overlay" data-overlay="gameover" hidden>
+        <div class="runner-panel">
+          <h3>Иногда остановиться — тоже часть пути</h3>
+          <dl class="runner-final">
+            <div><dt>Путь</dt><dd data-final="distance">0 м</dd></div>
+            <div><dt>Точки опоры</dt><dd data-final="footholds">0</dd></div>
+            <div><dt>Лучший путь</dt><dd data-final="best">0 м</dd></div>
+          </dl>
+          <div class="runner-actions">
+            <button type="button" class="button button-primary" data-action="restart">Попробовать ещё раз</button>
+            <button type="button" class="button button-secondary" data-action="breathing">Дыхательная практика</button>
+            <button type="button" class="button button-secondary" data-action="consultation">Узнать о консультации</button>
+          </div>
+        </div>
+      </div>
+
+      {# Оверлей: дыхательная практика #}
+      <div class="runner-overlay runner-overlay-breathing" data-overlay="breathing" hidden>
+        <div class="runner-panel">
+          <h3>Дыхательная практика</h3>
+          <div class="breath-circle" aria-hidden="true"><span></span></div>
+          <p class="breath-text">Вдох… задержка… медленный выдох. Повторите несколько кругов в комфортном темпе.</p>
+          <button type="button" class="button button-secondary" data-action="breathing-close">Вернуться</button>
+        </div>
+      </div>
+    </div>
+
+    <noscript>
+      <p class="runner-noscript">Мини-игра «В своём ритме» работает при включённом JavaScript. Основное содержимое сайта доступно и без неё.</p>
+    </noscript>
+  </div>
+
+  <link rel="stylesheet" href="/assets/game/runner.css?v={{ build.id }}" />
+  {# Импорт-карта версионирует весь граф ES-модулей: смена build.id после
+     деплоя гарантированно обновляет игру в браузере (обход кеша). #}
+  <script type="importmap">
+  {
+    "imports": {
+      {%- for mod in build.gameModules %}
+      "/assets/game/{{ mod }}.js": "/assets/game/{{ mod }}.js?v={{ build.id }}"{% if not loop.last %},{% endif %}
+      {%- endfor %}
+    }
+  }
+  </script>
+  <script type="module" src="/assets/game/main.js?v={{ build.id }}"></script>
+</section>

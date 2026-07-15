@@ -1,0 +1,400 @@
+/* Стили мини-игры «В своём ритме». Опираются на переменные сайта
+   (--wine, --milk, --paper, --serif, --sans и т.д. из styles.css). */
+
+.runner-section {
+  scroll-margin-top: 96px;
+}
+
+.runner {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.runner-stage {
+  position: relative;
+  width: 100%;
+  height: clamp(360px, 56vw, 480px);
+  overflow: hidden;
+  border: 1px solid var(--line, rgba(78, 42, 35, 0.14));
+  border-radius: 22px;
+  background: var(--milk, #f8f3ed);
+  box-shadow: var(--shadow, 0 24px 70px rgba(77, 43, 35, 0.12));
+  touch-action: none; /* свайпы внутри игры не прокручивают страницу */
+  user-select: none;
+}
+
+.runner-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 22px;
+  outline: none;
+}
+
+.runner-canvas:focus-visible {
+  box-shadow: inset 0 0 0 3px rgba(115, 24, 23, 0.5);
+}
+
+/* --- HUD ---------------------------------------------------------------- */
+
+.runner-hud {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  font-family: var(--sans, "Manrope", Arial, sans-serif);
+  color: var(--graphite, #272220);
+}
+
+.runner-hud-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.runner-stat {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: rgba(255, 250, 245, 0.82);
+  box-shadow: 0 6px 18px rgba(77, 43, 35, 0.1);
+  backdrop-filter: blur(6px);
+}
+
+.runner-stat small {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted, #756965);
+}
+
+.runner-stat b {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.runner-resource {
+  max-width: 260px;
+  padding: 8px 12px 10px;
+  border-radius: 12px;
+  background: rgba(255, 250, 245, 0.82);
+  box-shadow: 0 6px 18px rgba(77, 43, 35, 0.1);
+  backdrop-filter: blur(6px);
+}
+
+.runner-resource small {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted, #756965);
+}
+
+.runner-resource-track {
+  display: block;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(115, 24, 23, 0.12);
+  overflow: hidden;
+}
+
+.runner-resource-bar {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7fa88f, #9dbfab);
+  transition: width 220ms ease, background 400ms ease;
+}
+
+.runner-resource-bar.is-low {
+  background: linear-gradient(90deg, #c98b57, #d8a06a);
+}
+
+.runner-active-bonus {
+  align-self: flex-start;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(138, 166, 194, 0.9);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* --- Управление (звук, пауза) ------------------------------------------ */
+
+.runner-controls {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  gap: 8px;
+}
+
+.runner-sound,
+.runner-pause-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--line, rgba(78, 42, 35, 0.14));
+  border-radius: 50%;
+  background: rgba(255, 250, 245, 0.9);
+  color: var(--wine, #731817);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 150ms ease, background 150ms ease;
+}
+
+.runner-sound.is-on {
+  background: var(--wine, #731817);
+  color: #fff;
+}
+
+.runner-sound:hover,
+.runner-pause-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Кнопка паузы видна только во время игры. */
+.runner-stage[data-state="playing"] .runner-pause-btn {
+  display: inline-flex;
+}
+.runner-pause-btn {
+  display: none;
+}
+
+/* --- Экранные кнопки касаний ------------------------------------------- */
+
+.runner-touch {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  right: 14px;
+  display: none;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.runner-touch-btn {
+  flex: 1;
+  max-width: 180px;
+  min-height: 48px;
+  border: 1px solid rgba(115, 24, 23, 0.25);
+  border-radius: 14px;
+  background: rgba(255, 250, 245, 0.86);
+  color: var(--wine, #731817);
+  font-family: var(--sans, "Manrope", Arial, sans-serif);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  pointer-events: auto;
+  backdrop-filter: blur(6px);
+}
+
+.runner-touch-btn:active {
+  background: rgba(115, 24, 23, 0.12);
+}
+
+/* Показываем экранные кнопки во время игры на сенсорных экранах. */
+.runner-stage[data-state="playing"] .runner-touch {
+  display: flex;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* На «мышиных» устройствах экранные кнопки не навязываем. */
+  .runner-stage[data-state="playing"] .runner-touch {
+    display: none;
+  }
+}
+
+/* --- Всплывающая фраза -------------------------------------------------- */
+
+.runner-toast {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.96);
+  margin: 0;
+  padding: 10px 18px;
+  border-radius: 14px;
+  background: rgba(39, 34, 32, 0.82);
+  color: #fff;
+  font-family: var(--serif, "Cormorant Garamond", Georgia, serif);
+  font-size: 22px;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.runner-toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* --- Оверлеи ------------------------------------------------------------ */
+
+.runner-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(248, 243, 237, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.runner-overlay[hidden] {
+  display: none;
+}
+
+.runner-panel {
+  width: min(480px, 100%);
+  padding: 26px 24px;
+  border-radius: 18px;
+  background: var(--paper, #fffaf5);
+  box-shadow: 0 20px 50px rgba(77, 43, 35, 0.18);
+  text-align: center;
+}
+
+.runner-panel h3 {
+  margin: 0 0 10px;
+  color: var(--wine-dark, #4f0f0f);
+  font-family: var(--serif, "Cormorant Garamond", Georgia, serif);
+  font-size: clamp(26px, 4vw, 34px);
+  line-height: 1.05;
+}
+
+.runner-panel p {
+  margin: 0 auto 18px;
+  max-width: 40ch;
+  color: #4b403c;
+  font-family: var(--sans, "Manrope", Arial, sans-serif);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.runner-hint {
+  margin-top: 14px !important;
+  font-size: 12px !important;
+  color: var(--muted, #756965) !important;
+}
+
+.runner-final {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin: 0 0 20px;
+}
+
+.runner-final div {
+  display: flex;
+  flex-direction: column;
+}
+
+.runner-final dt {
+  font-family: var(--sans, "Manrope", Arial, sans-serif);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted, #756965);
+}
+
+.runner-final dd {
+  margin: 0;
+  font-family: var(--serif, "Cormorant Garamond", Georgia, serif);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--wine, #731817);
+}
+
+.runner-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.runner-actions .button {
+  width: 100%;
+}
+
+/* --- Дыхательная практика ---------------------------------------------- */
+
+.breath-circle {
+  display: grid;
+  place-items: center;
+  width: 140px;
+  height: 140px;
+  margin: 6px auto 18px;
+}
+
+.breath-circle span {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #9dbfab, #7fa88f);
+  box-shadow: 0 0 0 0 rgba(127, 168, 143, 0.4);
+  animation: breath 8s ease-in-out infinite;
+}
+
+@keyframes breath {
+  0%,
+  100% {
+    transform: scale(0.75);
+    box-shadow: 0 0 0 6px rgba(127, 168, 143, 0.18);
+  }
+  50% {
+    transform: scale(1.25);
+    box-shadow: 0 0 0 22px rgba(127, 168, 143, 0.06);
+  }
+}
+
+.breath-text {
+  font-family: var(--serif, "Cormorant Garamond", Georgia, serif);
+  font-size: 20px !important;
+}
+
+/* --- No-JS / reduced-motion -------------------------------------------- */
+
+.runner-noscript {
+  margin-top: 14px;
+  text-align: center;
+  color: var(--muted, #756965);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .runner-resource-bar,
+  .runner-toast,
+  .runner-sound,
+  .runner-pause-btn {
+    transition: none;
+  }
+  .breath-circle span {
+    animation-duration: 12s;
+  }
+}
+
+@media (max-width: 560px) {
+  .runner-stat b {
+    font-size: 14px;
+  }
+  .runner-resource {
+    max-width: 200px;
+  }
+  .runner-panel {
+    padding: 22px 18px;
+  }
+}
