@@ -40,6 +40,10 @@ export class Runner {
     this.lastTime = 0;
     this.rafId = null;
 
+    // Цели «прыжок»/«подкат» отправляем один раз за сессию, а не на каждое
+    // нажатие: иначе счётчик тонет в сотнях однотипных событий.
+    this._trackedActions = new Set();
+
     initAnalytics(root.dataset.ymId);
     this._initHud();
     this._initInput();
@@ -60,8 +64,10 @@ export class Runner {
       ctaBreathing: (e) => this._ctaBreathing(e),
       ctaConsultation: () => this._ctaConsultation(),
       closeBreathing: () => this._closeBreathing(),
+      stopRun: () => this._stopByChoice(),
     });
     this.hud.setSoundLabel(false);
+    this.hud.setIntroBest(getBestDistance());
   }
 
   _initInput() {
@@ -72,6 +78,7 @@ export class Runner {
         if (this.state === "intro" || this.state === "gameover") this.start();
       },
       togglePause: () => this.togglePause(),
+      getState: () => this.state,
     });
   }
 
@@ -155,6 +162,13 @@ export class Runner {
     m.standHeight = height * CONFIG.player.standHeightRatio;
     m.playerX = width * CONFIG.player.xRatio;
 
+    // Прыжок задан в «ростах персонажа» — пересчитываем физику под новый
+    // размер поля, чтобы на телефоне и на десктопе он ощущался одинаково.
+    this.player.setPhysics(
+      m.standHeight * CONFIG.player.jumpHeightRatio,
+      CONFIG.player.airTime
+    );
+
     this._lastW = width;
     this._lastH = height;
 
@@ -184,11 +198,21 @@ export class Runner {
     this.speed = CONFIG.world.baseSpeed;
     this.elapsed = 0;
     this.footholds = 0;
+    this.hits = 0;
     this.breathingTimer = 0;
     this.hitSlowTimer = 0;
+    this.regenPause = 0; // сек, в течение которых ресурс не восстанавливается
+    this.stopTimer = 0; // >0 → идёт мягкая остановка
+    this.stopping = false;
+    this.longHintShown = false;
+    this.worldFactor = 1; // текущий множитель скорости мира (для анимации)
 
     this.state = "playing";
     this.hud.setState("playing");
+    this._setPlayingChrome(true);
+    // Игра должна целиком помещаться в экран: на телефоне нижняя часть поля —
+    // это зона «пригнуться», её нельзя оставлять за краем окна.
+    this._scrollIntoView();
     // Фокус на игровое поле: после клика по кнопке «Начать» клавиатура
     // (Space/стрелки) должна сразу управлять игрой.
     this.canvas.focus({ preventScroll: true });
@@ -219,21 +243,69 @@ export class Runner {
     this.rafId = requestAnimationFrame((t) => this._loop(t));
   }
 
-  finish() {
-    this.state = "gameover";
+  // Игрок сам решил остановиться (кнопка в паузе). Это не проигрыш —
+  // в игре про ресурс осознанная остановка должна быть полноценным финалом.
+  _stopByChoice() {
+    if (this.state !== "playing" && this.state !== "paused") return;
     this._stopLoop();
+    this.finish("chosen");
+  }
+
+  // reason: "chosen" — остановился сам, "drained" — ресурс подошёл к нулю.
+  finish(reason = "drained") {
+    this.state = "gameover";
+    this.stopping = false;
+    this._stopLoop();
+    this._setPlayingChrome(false);
     const distanceM = this.distancePx * CONFIG.world.metersPerPx;
     const best = saveBestDistance(distanceM);
-    this.hud.setFinal({ distance: distanceM, footholds: this.footholds, best });
+    const c = CONFIG.copy;
+    this.hud.setFinal({
+      distance: distanceM,
+      footholds: this.footholds,
+      best,
+      title: reason === "chosen" ? c.finishTitleChosen : c.finishTitleDrained,
+      note: this._finalNote(reason, distanceM),
+    });
+    this.hud.setIntroBest(best);
     this.hud.setState("gameover");
     this.sound.finish();
     track(GOALS.finished);
     this._renderStatic();
   }
 
+  // Короткая фраза-осмысление вместо сухого «ты проиграл».
+  _finalNote(reason, distanceM) {
+    const c = CONFIG.copy;
+    if (reason === "chosen") return c.noteChosen;
+    if (this.hits >= 5) return c.noteHitMany;
+    // «Много опор» — примерно одна на каждые 25 метров пути.
+    const expected = Math.max(2, Math.round(distanceM / 25));
+    return this.footholds >= expected ? c.noteManyFootholds : c.noteFewFootholds;
+  }
+
   _stopLoop() {
     if (this.rafId) cancelAnimationFrame(this.rafId);
     this.rafId = null;
+  }
+
+  // Пока идёт забег, убираем липкую кнопку сайта: на мобильном она висит над
+  // нижним краем экрана — ровно там, где находится зона «пригнуться».
+  _setPlayingChrome(on) {
+    document.documentElement.classList.toggle("runner-is-playing", on);
+  }
+
+  // Подводим поле целиком в видимую область, если оно не помещается.
+  _scrollIntoView() {
+    const stage = this.root.querySelector(".runner-stage");
+    if (!stage) return;
+    const r = stage.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    if (r.top >= 0 && r.bottom <= vh) return;
+    stage.scrollIntoView({
+      block: "center",
+      behavior: this.reducedMotion ? "auto" : "smooth",
+    });
   }
 
   // --- Действия игрока ----------------------------------------------------
@@ -243,13 +315,21 @@ export class Runner {
       this.start();
       return;
     }
-    if (this.state !== "playing") return;
-    if (this.player.jump(this.sound)) track(GOALS.jump);
+    if (this.state !== "playing" || this.stopping) return;
+    if (this.player.jump(this.sound)) this._trackOnce(GOALS.jump);
   }
 
   _slide() {
-    if (this.state !== "playing") return;
-    if (this.player.slide(this.sound)) track(GOALS.slide);
+    if (this.state !== "playing" || this.stopping) return;
+    if (this.player.slide(this.sound)) this._trackOnce(GOALS.slide);
+  }
+
+  // Цель отправляется один раз за сессию — счётчик не должен захлёбываться
+  // от сотни одинаковых прыжков.
+  _trackOnce(goal) {
+    if (this._trackedActions.has(goal)) return;
+    this._trackedActions.add(goal);
+    track(goal);
   }
 
   _toggleSound() {
@@ -297,9 +377,10 @@ export class Runner {
 
     this._ensureSize();
     this._update(dt);
-    this._render();
 
+    // _update мог завершить забег — тогда кадр уже отрисован статикой.
     if (this.state === "playing") {
+      this._render();
       this.rafId = requestAnimationFrame((t) => this._loop(t));
     }
   }
@@ -325,11 +406,25 @@ export class Runner {
       slow = Math.min(slow, CONFIG.player.hitSlowFactor);
     }
 
+    // Мягкая остановка: мир плавно тормозит до нуля и только потом — финал.
+    if (this.stopping) {
+      this.stopTimer += dt;
+      const left = 1 - this.stopTimer / CONFIG.world.stopDuration;
+      slow = Math.min(slow, Math.max(0, left * left));
+      if (left <= 0) {
+        this.finish("drained");
+        return;
+      }
+    }
+
+    this.worldFactor = slow;
     const movedPx = this.speed * slow * dt;
     this.distancePx += movedPx;
 
     this.background.update(movedPx);
-    this.player.update(dt);
+    // Беговой цикл замедляется вместе с миром — иначе при остановке
+    // персонаж продолжает «перебирать ногами» на месте.
+    this.player.update(dt, slow);
 
     // Двигаем и отсеиваем объекты.
     for (const e of this.entities) e.x -= movedPx;
@@ -339,17 +434,32 @@ export class Runner {
     const created = this.spawner.update(movedPx, this.speed * slow, this.metrics.viewWidth);
     if (created.length) this.entities.push(...created);
 
-    this._handleCollisions();
+    if (!this.stopping) this._handleCollisions();
 
-    // Медленное снижение ресурса при долгом беге.
-    this.resource = Math.max(
-      CONFIG.resource.min,
-      this.resource - CONFIG.resource.drainPerSecond * dt
-    );
+    // Ресурс не утекает сам по себе: спокойный бег его восстанавливает.
+    // После удара восстановление берёт паузу — «прийти в себя» нужно время.
+    const R = CONFIG.resource;
+    if (this.regenPause > 0) {
+      this.regenPause = Math.max(0, this.regenPause - dt);
+    } else if (!this.stopping) {
+      this.resource = Math.min(R.max, this.resource + R.regenPerSecond * dt);
+    }
+
+    // Аккуратный игрок может бежать сколько угодно — напоминаем, что
+    // остановка доступна и что она не считается проигрышем.
+    if (!this.longHintShown && this.elapsed > CONFIG.world.longRunHintAfter) {
+      this.longHintShown = true;
+      this.hud.toast(CONFIG.copy.longRunHint);
+    }
 
     this._syncHud();
 
-    if (this.resource <= CONFIG.resource.min) this.finish();
+    if (this.resource <= R.min && !this.stopping) {
+      this.stopping = true;
+      this.stopTimer = 0;
+      // Во время торможения персонажа больше нельзя задеть.
+      this.player.invulnerable = CONFIG.world.stopDuration;
+    }
   }
 
   _handleCollisions() {
@@ -366,6 +476,8 @@ export class Runner {
             CONFIG.resource.min,
             this.resource - CONFIG.resource.collisionDamage
           );
+          this.hits += 1;
+          this.regenPause = CONFIG.resource.regenDelay;
           this.player.applyKnockback();
           this.hitSlowTimer = CONFIG.player.hitSlowDuration;
           this.sound.hit();
@@ -471,7 +583,9 @@ export class Runner {
     ctx.fillStyle = "#4d2b23";
     const shadowW = m.standHeight * 0.5;
     ctx.beginPath();
-    ctx.ellipse(footX, m.groundY, shadowW * (idle ? 0.9 : 1 - Math.min(0.5, player.y / 240)), shadowW * 0.16, 0, 0, Math.PI * 2);
+    // Тень сжимается по мере набора высоты — доля от роста, не абсолютные px.
+    const lift = idle ? 0 : Math.min(0.5, player.y / (m.standHeight * 1.6));
+    ctx.ellipse(footX, m.groundY, shadowW * (1 - lift), shadowW * 0.16, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
 
@@ -502,6 +616,8 @@ export class Runner {
   _currentSprite(idle) {
     const s = this.sprites.images;
     if (idle || this.state !== "playing") return s.idle;
+    // На излёте мягкой остановки персонаж переходит в стойку.
+    if (this.stopping && this.worldFactor < 0.2 && this.player.state === "run") return s.idle;
     const p = this.player;
     if (p.state === "jump") return s.jump;
     if (p.state === "slide") return s.slide;
@@ -525,6 +641,7 @@ export class Runner {
 
   destroy() {
     this._stopLoop();
+    this._setPlayingChrome(false);
     this.input?.destroy();
     this._ro?.disconnect();
     if (this._onResize) {

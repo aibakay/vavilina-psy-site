@@ -1,11 +1,26 @@
 // Физика и состояния персонажа: бег, прыжок, подкат, неуязвимость.
 // Персонаж стоит на месте по X; управление меняет вертикальное состояние.
+//
+// Гравитация и скорость прыжка не зашиты в конфиге: их задаёт движок при
+// ресайзе (setPhysics), пересчитывая из «ростов персонажа» и времени в
+// воздухе. Иначе на телефоне фигура прыгала бы на две свои высоты, а на
+// большом экране едва отрывалась от земли.
 
 import { CONFIG } from "./config.js";
 
 export class Player {
   constructor() {
+    // Значения до первого setPhysics — движок вызывает его в _resize().
+    this.gravity = 1900;
+    this.jumpVelocity = -900;
     this.reset();
+  }
+
+  // apexPx — высота прыжка в px, airTime — полное время в воздухе (сек).
+  setPhysics(apexPx, airTime) {
+    const half = airTime / 2;
+    this.gravity = (2 * apexPx) / (half * half);
+    this.jumpVelocity = -(2 * apexPx) / half;
   }
 
   reset() {
@@ -27,7 +42,7 @@ export class Player {
     if (this.state === "jump") return false;
     // Из подката тоже можно выпрыгнуть.
     this.state = "jump";
-    this.vy = CONFIG.player.jumpVelocity;
+    this.vy = this.jumpVelocity;
     this.slideTimer = 0;
     this.wantSlide = false;
     sound?.jump();
@@ -43,7 +58,7 @@ export class Player {
     if (this.state === "jump") {
       // В воздухе персонаж не телепортируется вниз: ускоряем падение,
       // а подкат начнётся в момент приземления.
-      this.vy = Math.max(this.vy, 900);
+      this.vy = Math.max(this.vy, -this.jumpVelocity * CONFIG.player.fastFallFactor * 0.5);
       this.wantSlide = true;
       return false;
     }
@@ -70,11 +85,13 @@ export class Player {
     return false;
   }
 
-  update(dt) {
+  // animScale — множитель скорости мира (0..1). Беговой цикл замедляется
+  // вместе с ним, иначе на остановке персонаж «перебирает ногами» на месте.
+  update(dt, animScale = 1) {
     if (this.invulnerable > 0) this.invulnerable = Math.max(0, this.invulnerable - dt);
 
     if (this.state === "jump") {
-      this.vy += CONFIG.player.gravity * dt;
+      this.vy += this.gravity * dt;
       this.y -= this.vy * dt; // vy отрицательна вверх → y растёт вверх
       if (this.y <= 0) {
         this.y = 0;
@@ -93,7 +110,7 @@ export class Player {
         this.state = "run";
       }
     } else {
-      this.runTime += dt;
+      this.runTime += dt * animScale;
     }
   }
 }

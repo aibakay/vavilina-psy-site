@@ -20,8 +20,15 @@
   border-radius: 22px;
   background: var(--milk, #f8f3ed);
   box-shadow: var(--shadow, 0 24px 70px rgba(77, 43, 35, 0.12));
-  touch-action: none; /* свайпы внутри игры не прокручивают страницу */
+  /* Пока игра не идёт, страница должна прокручиваться пальцем поверх поля:
+     блок занимает пол-экрана телефона и не может быть «ловушкой» для скролла. */
+  touch-action: manipulation;
   user-select: none;
+}
+
+/* Во время забега касания принадлежат игре. */
+.runner-stage[data-state="playing"] {
+  touch-action: none;
 }
 
 .runner-canvas {
@@ -172,48 +179,21 @@
   display: none;
 }
 
-/* --- Экранные кнопки касаний ------------------------------------------- */
+/* --- Подсказки по управлению -------------------------------------------- */
 
-.runner-touch {
-  position: absolute;
-  bottom: 14px;
-  left: 14px;
-  right: 14px;
+/* Управление касанием — по зонам поля (верх/низ), экранных кнопок нет:
+   на телефоне они съедали нижнюю треть и перекрывали землю. Поэтому
+   подсказку показываем ту, что соответствует устройству. */
+.runner-hint-touch {
   display: none;
-  justify-content: space-between;
-  gap: 12px;
-  pointer-events: none;
 }
 
-.runner-touch-btn {
-  flex: 1;
-  max-width: 180px;
-  min-height: 48px;
-  border: 1px solid rgba(115, 24, 23, 0.25);
-  border-radius: 14px;
-  background: rgba(255, 250, 245, 0.86);
-  color: var(--wine, #731817);
-  font-family: var(--sans, "Manrope", Arial, sans-serif);
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  pointer-events: auto;
-  backdrop-filter: blur(6px);
-}
-
-.runner-touch-btn:active {
-  background: rgba(115, 24, 23, 0.12);
-}
-
-/* Показываем экранные кнопки во время игры на сенсорных экранах. */
-.runner-stage[data-state="playing"] .runner-touch {
-  display: flex;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  /* На «мышиных» устройствах экранные кнопки не навязываем. */
-  .runner-stage[data-state="playing"] .runner-touch {
+@media (hover: none), (pointer: coarse) {
+  .runner-hint-keys {
     display: none;
+  }
+  .runner-hint-touch {
+    display: block;
   }
 }
 
@@ -289,6 +269,35 @@
   margin-top: 14px !important;
   font-size: 12px !important;
   color: var(--muted, #756965) !important;
+}
+
+/* Личный ориентир на стартовом экране (виден, только если забег уже был). */
+.runner-intro-best {
+  margin: 0 auto 2px !important;
+  font-size: 13px !important;
+  color: var(--muted, #756965) !important;
+}
+
+.runner-intro-best[hidden] {
+  display: none;
+}
+
+.runner-intro-best b {
+  color: var(--wine, #731817);
+}
+
+/* Мягкий вывод по итогам забега вместо сухого счёта. */
+.runner-note {
+  margin: -6px auto 18px !important;
+  max-width: 34ch;
+  font-family: var(--serif, "Cormorant Garamond", Georgia, serif) !important;
+  font-size: 19px !important;
+  line-height: 1.35 !important;
+  color: #4b403c !important;
+}
+
+.runner-note:empty {
+  display: none;
 }
 
 .runner-final {
@@ -387,14 +396,76 @@
   }
 }
 
+/* Пока идёт забег, липкая кнопка сайта не должна висеть над игровым полем:
+   на мобильном она занимает ровно ту зону, которая отвечает за «пригнуться». */
+.runner-is-playing .mobile-sticky-cta {
+  display: none;
+}
+
+/* На мобильном секции сайта примагничиваются к верху экрана (scroll-snap).
+   Для игры это вредно: при «примагниченной» секции нижняя часть поля —
+   зона «пригнуться» — уходит под нижний край окна, и снап отменяет любую
+   попытку доскроллить. Здесь снап отключаем: поле важнее выравнивания. */
+@media (max-width: 768px) {
+  main > .section.runner-section {
+    scroll-snap-align: none;
+  }
+}
+
+/* --- Небольшие экраны --------------------------------------------------- */
+
 @media (max-width: 560px) {
+  /* HUD ужимаем: на поле высотой 360px он занимал больше трети экрана. */
+  .runner-hud {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    gap: 6px;
+  }
+  .runner-hud-row {
+    gap: 6px;
+  }
+  .runner-stat {
+    padding: 4px 9px;
+    border-radius: 10px;
+  }
+  .runner-stat small {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+  }
   .runner-stat b {
-    font-size: 14px;
+    font-size: 13px;
   }
   .runner-resource {
-    max-width: 200px;
+    max-width: 148px;
+    padding: 5px 9px 7px;
+    border-radius: 10px;
+  }
+  .runner-resource small {
+    margin-bottom: 4px;
+    font-size: 9px;
+  }
+  .runner-resource-track {
+    height: 7px;
+  }
+  .runner-sound,
+  .runner-pause-btn {
+    width: 34px;
+    height: 34px;
+  }
+  .runner-controls {
+    top: 10px;
+    right: 10px;
+    gap: 6px;
+  }
+  .runner-toast {
+    font-size: 18px;
+    max-width: 80%;
   }
   .runner-panel {
     padding: 22px 18px;
+  }
+  .runner-note {
+    font-size: 17px !important;
   }
 }

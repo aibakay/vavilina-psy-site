@@ -18,6 +18,12 @@ export class Hud {
     this.elFinalDistance = root.querySelector("[data-final='distance']");
     this.elFinalFootholds = root.querySelector("[data-final='footholds']");
     this.elFinalBest = root.querySelector("[data-final='best']");
+    this.elFinalTitle = root.querySelector("[data-final='title']");
+    this.elFinalNote = root.querySelector("[data-final='note']");
+
+    // Личный ориентир на стартовом экране.
+    this.elIntroBest = root.querySelector("[data-intro='best']");
+    this.elIntroBestValue = root.querySelector("[data-intro='best-value']");
 
     // Всплывающая мягкая подсказка (фразы бонусов).
     this.elToast = root.querySelector("[data-hud='toast']");
@@ -63,6 +69,9 @@ export class Hud {
           case "breathing-close":
             h.closeBreathing?.();
             break;
+          case "stop":
+            h.stopRun?.();
+            break;
           default:
             break;
         }
@@ -104,10 +113,20 @@ export class Hud {
     }
   }
 
-  setFinal({ distance, footholds, best }) {
+  setFinal({ distance, footholds, best, title, note }) {
     if (this.elFinalDistance) this.elFinalDistance.textContent = `${Math.floor(distance)} м`;
     if (this.elFinalFootholds) this.elFinalFootholds.textContent = String(footholds);
     if (this.elFinalBest) this.elFinalBest.textContent = `${Math.floor(best)} м`;
+    if (this.elFinalTitle && title) this.elFinalTitle.textContent = title;
+    if (this.elFinalNote) this.elFinalNote.textContent = note || "";
+  }
+
+  // Личный ориентир показываем только когда он уже есть.
+  setIntroBest(best) {
+    if (!this.elIntroBest) return;
+    const value = Math.floor(best || 0);
+    this.elIntroBest.hidden = value <= 0;
+    if (this.elIntroBestValue) this.elIntroBestValue.textContent = `${value} м`;
   }
 
   // Мягкая фраза (бонусы «Дыхание» / «Поддержка»).

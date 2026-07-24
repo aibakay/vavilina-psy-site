@@ -18,7 +18,7 @@
         class="runner-canvas"
         tabindex="0"
         role="img"
-        aria-label="Игровое поле: персонаж бежит вправо, избегая препятствий и собирая точки опоры"
+        aria-label="Игровое поле: персонаж бежит вперёд, перепрыгивая препятствия и собирая точки опоры"
       ></canvas>
 
       {# Живой счёт #}
@@ -40,12 +40,6 @@
         <button type="button" class="runner-pause-btn" data-action="pause" aria-label="Пауза">II</button>
       </div>
 
-      {# Экранные кнопки для касаний #}
-      <div class="runner-touch" aria-hidden="false">
-        <button type="button" class="runner-touch-btn" data-action="jump" aria-label="Прыжок">Прыжок</button>
-        <button type="button" class="runner-touch-btn" data-action="slide" aria-label="Пригнуться">Пригнуться</button>
-      </div>
-
       {# Мягкая всплывающая фраза #}
       <p class="runner-toast" data-hud="toast" aria-live="polite"></p>
 
@@ -53,9 +47,13 @@
       <div class="runner-overlay" data-overlay="intro" hidden>
         <div class="runner-panel">
           <h3>В своём ритме</h3>
-          <p>Не обязательно бежать быстрее. Попробуй сохранить свой ресурс.</p>
+          <p>Не обязательно бежать быстрее. Ресурс восстанавливается сам, когда бежишь спокойно, — а закончить можно в любой момент.</p>
           <button type="button" class="button button-primary" data-action="start">Начать</button>
-          <p class="runner-hint">Space / ↑ — прыжок · ↓ — подкат · Enter — старт · Esc — пауза</p>
+          <p class="runner-intro-best" data-intro="best" hidden>
+            Твой лучший путь — <b data-intro="best-value">0 м</b>
+          </p>
+          <p class="runner-hint runner-hint-keys">Space / ↑ — прыжок · ↓ — подкат · Enter — старт · Esc — пауза</p>
+          <p class="runner-hint runner-hint-touch">Касание вверху экрана — прыжок, внизу — пригнуться</p>
         </div>
       </div>
 
@@ -63,20 +61,24 @@
       <div class="runner-overlay" data-overlay="paused" hidden>
         <div class="runner-panel">
           <h3>Пауза</h3>
-          <p>Можно перевести дыхание.</p>
-          <button type="button" class="button button-primary" data-action="resume">Продолжить</button>
+          <p>Можно перевести дыхание. Остановиться совсем — тоже нормально.</p>
+          <div class="runner-actions">
+            <button type="button" class="button button-primary" data-action="resume">Продолжить</button>
+            <button type="button" class="button button-secondary" data-action="stop">Закончить здесь</button>
+          </div>
         </div>
       </div>
 
       {# Оверлей: завершение #}
       <div class="runner-overlay" data-overlay="gameover" hidden>
         <div class="runner-panel">
-          <h3>Иногда остановиться — тоже часть пути</h3>
+          <h3 data-final="title">Иногда остановиться — тоже часть пути</h3>
           <dl class="runner-final">
             <div><dt>Путь</dt><dd data-final="distance">0 м</dd></div>
             <div><dt>Точки опоры</dt><dd data-final="footholds">0</dd></div>
             <div><dt>Лучший путь</dt><dd data-final="best">0 м</dd></div>
           </dl>
+          <p class="runner-note" data-final="note"></p>
           <div class="runner-actions">
             <button type="button" class="button button-primary" data-action="restart">Попробовать ещё раз</button>
             <button type="button" class="button button-secondary" data-action="breathing">Дыхательная практика</button>
