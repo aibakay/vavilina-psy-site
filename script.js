@@ -223,6 +223,99 @@ reviewTabsList.forEach((tab) => {
   });
 });
 
+// Раскрывающиеся блоки (FAQ и условия записи). Нативный <details> открывается
+// рывком, а CSS сам по себе высоту анимировать не может: пока блок закрыт,
+// содержимое выключено из отрисовки и переходу не за что зацепиться. Поэтому
+// высоту меряем и анимируем вручную. Без JS блок остаётся рабочим — просто
+// открывается без анимации, поведение нативное.
+const disclosureEase = "cubic-bezier(0.22, 0.61, 0.36, 1)";
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+const setupDisclosure = (details) => {
+  const summary = details.querySelector("summary");
+  const body = Array.from(details.children).filter((child) => child !== summary);
+
+  if (!summary || !body.length) {
+    return;
+  }
+
+  let animation = null;
+  let closing = false;
+
+  // Высота в закрытом виде: закрываем, меряем и тут же возвращаем как было.
+  // Кадр браузер рисует только в конце задачи, поэтому мигания не видно.
+  const collapsedHeight = () => {
+    const wasOpen = details.open;
+    details.open = false;
+    const height = details.offsetHeight;
+    details.open = wasOpen;
+    return height;
+  };
+
+  const animateHeight = (from, to, onFinish) => {
+    details.style.overflow = "hidden";
+    animation = details.animate(
+      { height: [`${from}px`, `${to}px`] },
+      {
+        // Длинным ответам даём чуть больше времени, но без затягивания.
+        duration: Math.min(460, 240 + Math.abs(to - from) * 0.5),
+        easing: disclosureEase,
+      },
+    );
+
+    animation.addEventListener(
+      "finish",
+      () => {
+        animation = null;
+        details.style.overflow = "";
+        onFinish?.();
+      },
+      { once: true },
+    );
+  };
+
+  summary.addEventListener("click", (event) => {
+    if (reducedMotion.matches) {
+      return; // пусть браузер откроет как обычно, без анимации
+    }
+
+    event.preventDefault();
+
+    // Текущую высоту читаем до отмены анимации: пока она идёт, offsetHeight
+    // показывает промежуточное значение, и повторный клик подхватит его с
+    // того места, где блок сейчас, а не прыгнет.
+    const from = details.offsetHeight;
+    animation?.cancel();
+    animation = null;
+
+    // Во время закрытия details.open ещё true — иначе содержимое исчезло бы,
+    // не дождавшись анимации. Поэтому «открыт ли блок» смотрим с поправкой.
+    if (details.open && !closing) {
+      closing = true;
+      animateHeight(from, collapsedHeight(), () => {
+        closing = false;
+        details.open = false;
+      });
+      return;
+    }
+
+    closing = false;
+    details.open = true;
+    animateHeight(from, details.offsetHeight);
+
+    // Содержимое не просто проявляется вместе с высотой, а слегка выезжает
+    // сверху с небольшой задержкой — так раскрытие читается как движение.
+    body.forEach((element) =>
+      element.animate(
+        { opacity: [0, 1], transform: ["translateY(-8px)", "none"] },
+        { duration: 260, delay: 90, easing: disclosureEase, fill: "backwards" },
+      ),
+    );
+  });
+};
+
+document.querySelectorAll(".accordion details, .service-note").forEach(setupDisclosure);
+
 const lightbox = document.getElementById("lightbox");
 
 if (lightbox) {

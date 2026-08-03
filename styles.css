@@ -1069,6 +1069,54 @@ h3 {
   margin: 14px 0 0;
 }
 
+/* --- Раскрывающиеся блоки: FAQ и условия записи ---------------------------
+   Маркер рисуем сами: родной треугольник ▶ нельзя плавно повернуть. Сама
+   высота анимируется из script.js — CSS так не умеет, пока блок закрыт,
+   содержимое просто выключено из отрисовки. */
+
+.accordion summary,
+.service-note summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  list-style: none;
+  transition: color 0.25s ease;
+}
+
+/* Safari: у него свой маркер, отдельно от list-style. */
+.accordion summary::-webkit-details-marker,
+.service-note summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion summary::before,
+.service-note summary::before {
+  content: "";
+  flex: none;
+  width: 7px;
+  height: 7px;
+  margin-top: 0.42em;
+  border-right: 2px solid var(--wine);
+  border-bottom: 2px solid var(--wine);
+  transform: rotate(-45deg);
+  transition: transform 0.34s cubic-bezier(0.22, 0.61, 0.36, 1), border-color 0.25s ease;
+}
+
+.accordion details[open] summary::before,
+.service-note[open] summary::before {
+  transform: rotate(45deg);
+}
+
+.accordion summary:hover,
+.service-note summary:hover {
+  color: var(--wine);
+}
+
+.accordion summary:hover::before,
+.service-note summary:hover::before {
+  border-color: var(--wine-dark);
+}
+
 .final-cta {
   display: grid;
   grid-template-columns: 1fr auto;
