@@ -1,6 +1,6 @@
-// Продакшн-сервер для хостинга без serverless-функций (например, Timeweb Cloud Apps).
+// Продакшн-сервер сайта. Работает в Docker-контейнере на Timeweb Cloud VPS за
+// обратным прокси, который держит HTTPS и проксирует на порт 3000.
 // Отдаёт статическую сборку из _site и обслуживает /api/auth для входа в админ-панель.
-// На Vercel этот файл не используется — там работает api/auth.js как serverless-функция.
 
 const express = require("express");
 const path = require("path");

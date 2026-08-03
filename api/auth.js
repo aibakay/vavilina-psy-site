@@ -4,7 +4,7 @@
 // Здесь мы закрываем вход простым паролем и, при верном пароле, отдаём один
 // общий токен владельца. Все правки коммитятся от имени владельца.
 //
-// Переменные окружения в Vercel:
+// Переменные окружения контейнера (задаются при запуске, см. ADMIN.md):
 //   GITHUB_TOKEN   — fine-grained Personal Access Token (доступ только к этому
 //                    репозиторию, права Contents: read/write)
 //   ADMIN_PASSWORD — пароль для входа в панель
@@ -244,7 +244,9 @@ module.exports = async (req, res) => {
     if (!token || !password) {
       sendHtml(
         res,
-        formPage("Панель не настроена: задайте GITHUB_TOKEN и ADMIN_PASSWORD в Vercel."),
+        formPage(
+          "Панель не настроена: задайте GITHUB_TOKEN и ADMIN_PASSWORD в переменных окружения контейнера.",
+        ),
       );
       return;
     }
