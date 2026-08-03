@@ -41,9 +41,9 @@ app.use((req, res, next) => {
 });
 
 // Защита входа от перебора живёт внутри самого обработчика (lib/rate-limit.js),
-// а не отдельной middleware здесь: так лимит действует одинаково и на этом
-// сервере, и на Vercel, где server.js не используется. Счётчик общий для всех
-// процессов на хосте — см. раздел «Scaling» в README.md.
+// а не отдельной middleware здесь: так её нельзя обойти, повесив обработчик на
+// ещё один маршрут и забыв про лимитер. Счётчик общий для всех процессов на
+// сервере — см. раздел «Scaling» в README.md.
 app.all("/api/auth", (req, res) => authHandler(req, res));
 
 app.use(express.static(path.join(__dirname, "_site"), { extensions: ["html"] }));

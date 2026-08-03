@@ -166,7 +166,7 @@ describe("clientIp", () => {
     assert.equal(ip, "9.9.9.9");
   });
 
-  it("берёт первый адрес из X-Forwarded-For (Vercel)", () => {
+  it("берёт первый адрес из X-Forwarded-For, если req.ip нет", () => {
     const ip = limiter.clientIp({ headers: { "x-forwarded-for": "1.1.1.1, 2.2.2.2" } });
     assert.equal(ip, "1.1.1.1");
   });
