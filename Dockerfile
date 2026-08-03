@@ -12,6 +12,7 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 COPY server.js ./
 COPY api ./api
+COPY lib ./lib
 COPY --from=build /app/_site ./_site
 
 # Не работаем от root: пользователь node есть в образе node:20-alpine.

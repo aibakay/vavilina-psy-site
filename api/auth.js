@@ -10,6 +10,7 @@
 //   ADMIN_PASSWORD — пароль для входа в панель
 
 const crypto = require("crypto");
+const rateLimit = require("../lib/rate-limit.js");
 
 // Тело запроса к /api/auth — это форма входа с единственным полем `password`.
 // Килобайта на неё хватает с большим запасом, поэтому читаем строго с лимитом:
@@ -139,6 +140,19 @@ function sendPayloadTooLarge(req, res) {
   destroyAfterResponse(req, res);
 }
 
+// Тело запроса мы в этом случае не читаем, поэтому закрываем соединение так же,
+// как на 413: иначе клиент продолжит слать байты уже никому.
+function sendTooManyRequests(req, res, retryAfter) {
+  if (canRespond(res)) {
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Connection", "close");
+    res.setHeader("Retry-After", String(retryAfter));
+    res.status(429).send("Слишком много попыток входа. Попробуйте позже.");
+  }
+  destroyAfterResponse(req, res);
+}
+
 // Форма ввода пароля.
 function formPage(error) {
   return `<!doctype html>
@@ -240,6 +254,14 @@ module.exports = async (req, res) => {
     const selfOrigin = `${proto}://${host}`;
 
     if (req.method === "POST") {
+      // Лимитируем только попытки входа: GET просто рисует форму. Проверка идёт
+      // до чтения тела — перебирающему пароль незачем давать даже это.
+      const limit = rateLimit.consume(rateLimit.clientIp(req));
+      if (!limit.allowed) {
+        sendTooManyRequests(req, res, limit.retryAfter);
+        return;
+      }
+
       const submitted = await getSubmittedPassword(req);
       if (submitted === PAYLOAD_TOO_LARGE) {
         sendPayloadTooLarge(req, res);

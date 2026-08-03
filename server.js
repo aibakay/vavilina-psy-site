@@ -40,42 +40,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// --- Защита входа от перебора ----------------------------------------------
-// Простой in-memory лимитер по IP: не больше AUTH_MAX_ATTEMPTS запросов за
-// AUTH_WINDOW_MS. Один процесс/контейнер, состояние в памяти — этого достаточно.
-const AUTH_WINDOW_MS = 15 * 60 * 1000; // 15 минут
-const AUTH_MAX_ATTEMPTS = 10;
-const authHits = new Map(); // ip -> { count, resetAt }
-
-// Периодическая очистка устаревших записей, чтобы Map не рос бесконечно.
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, rec] of authHits) {
-    if (now > rec.resetAt) authHits.delete(ip);
-  }
-}, AUTH_WINDOW_MS).unref();
-
-function authRateLimit(req, res, next) {
-  // Лимитируем только попытки входа (POST с паролем); GET просто рисует форму.
-  if (req.method !== "POST") return next();
-  const now = Date.now();
-  const ip = req.ip || "unknown";
-  let rec = authHits.get(ip);
-  if (!rec || now > rec.resetAt) {
-    rec = { count: 0, resetAt: now + AUTH_WINDOW_MS };
-    authHits.set(ip, rec);
-  }
-  rec.count += 1;
-  if (rec.count > AUTH_MAX_ATTEMPTS) {
-    const retryAfter = Math.ceil((rec.resetAt - now) / 1000);
-    res.setHeader("Retry-After", String(retryAfter));
-    res.status(429).type("text").send("Слишком много попыток входа. Попробуйте позже.");
-    return;
-  }
-  next();
-}
-
-app.all("/api/auth", authRateLimit, (req, res) => authHandler(req, res));
+// Защита входа от перебора живёт внутри самого обработчика (lib/rate-limit.js),
+// а не отдельной middleware здесь: так лимит действует одинаково и на этом
+// сервере, и на Vercel, где server.js не используется. Счётчик общий для всех
+// процессов на хосте — см. раздел «Scaling» в README.md.
+app.all("/api/auth", (req, res) => authHandler(req, res));
 
 app.use(express.static(path.join(__dirname, "_site"), { extensions: ["html"] }));
 
