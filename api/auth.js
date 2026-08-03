@@ -11,21 +11,78 @@
 
 const crypto = require("crypto");
 
-function readRawBody(req) {
+// Тело запроса к /api/auth — это форма входа с единственным полем `password`.
+// Килобайта на неё хватает с большим запасом, поэтому читаем строго с лимитом:
+// иначе любой желающий отправит POST на сотню мегабайт и уронит контейнер по
+// памяти (OOM), просто потому что тело склеивалось в строку без ограничений.
+const MAX_PAYLOAD_SIZE = 1024; // байт
+
+// Маркер «тело превысило лимит» — его нельзя спутать с пустым телом.
+const PAYLOAD_TOO_LARGE = Symbol("payload-too-large");
+
+// Поток может выдать ошибку в любой момент (обрыв сокета, req.destroy() ниже).
+// Без слушателя событие 'error' на потоке роняет весь процесс, поэтому вешаем
+// пустую заглушку на оба потока в самом начале обработки.
+function ignoreStreamErrors(stream) {
+  if (stream && typeof stream.on === "function") stream.on("error", () => {});
+}
+
+function chunkSize(chunk) {
+  return Buffer.isBuffer(chunk) ? chunk.length : Buffer.byteLength(String(chunk));
+}
+
+function readRawBody(req, limit = MAX_PAYLOAD_SIZE) {
   return new Promise((resolve) => {
-    let data = "";
-    req.on("data", (chunk) => (data += chunk));
-    req.on("end", () => resolve(data));
-    req.on("error", () => resolve(""));
+    // Заголовок может врать, но если он честно объявляет слишком большое тело —
+    // отказываем, не прочитав ни байта.
+    const declared = Number(req.headers && req.headers["content-length"]);
+    if (Number.isFinite(declared) && declared > limit) {
+      resolve(PAYLOAD_TOO_LARGE);
+      return;
+    }
+
+    let chunks = [];
+    let size = 0;
+    let settled = false;
+
+    // Слушатели намеренно не снимаем: поздние 'error'/'aborted' должны попадать
+    // в обработчик, а не всплывать как необработанное событие. Повторные вызовы
+    // гасит флаг settled.
+    const done = (value) => {
+      if (settled) return;
+      settled = true;
+      resolve(value);
+    };
+
+    req.on("data", (chunk) => {
+      if (settled) return;
+      size += chunkSize(chunk);
+      if (size > limit) {
+        chunks = []; // отпускаем уже накопленное
+        req.pause(); // перестаём вычитывать сокет прямо сейчас
+        done(PAYLOAD_TOO_LARGE);
+        return;
+      }
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(String(chunk)));
+    });
+    req.on("end", () => done(Buffer.concat(chunks).toString("utf8")));
+    req.on("error", () => done(""));
+    req.on("aborted", () => done(""));
   });
 }
 
 async function getSubmittedPassword(req) {
   if (req.body) {
+    // На некоторых платформах тело разбирает сама платформа — там свои лимиты,
+    // но проверяем и этот путь, чтобы правило было одно для всех входов.
+    if (typeof req.body === "string") {
+      if (Buffer.byteLength(req.body) > MAX_PAYLOAD_SIZE) return PAYLOAD_TOO_LARGE;
+      return new URLSearchParams(req.body).get("password") || "";
+    }
     if (typeof req.body === "object") return req.body.password || "";
-    if (typeof req.body === "string") return new URLSearchParams(req.body).get("password") || "";
   }
   const raw = await readRawBody(req);
+  if (raw === PAYLOAD_TOO_LARGE) return PAYLOAD_TOO_LARGE;
   return new URLSearchParams(raw).get("password") || "";
 }
 
@@ -36,10 +93,50 @@ function safeEqual(a, b) {
   return crypto.timingSafeEqual(ab, bb);
 }
 
+// Ответ мог уже уйти (или соединение — умереть): второй res.send() бросил бы
+// исключение, поэтому все отправки идут через эту проверку.
+function canRespond(res) {
+  return !res.headersSent && !res.writableEnded && !res.destroyed;
+}
+
 function sendHtml(res, html) {
+  if (!canRespond(res)) return;
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
   res.status(200).send(html);
+}
+
+// Рвём соединение, но только после того, как ответ ушёл клиенту: уничтоженный
+// сокет отправляет RST, и тогда клиент не увидит ни 413, ни чего-либо ещё.
+// Таймер — страховка на случай, если ответ так и не будет дописан.
+function destroyAfterResponse(req, res) {
+  let killed = false;
+  const kill = () => {
+    if (killed) return;
+    killed = true;
+    clearTimeout(timer);
+    // Вызов происходит из таймера/события: брошенное здесь исключение никто не
+    // поймает, поэтому проверяем и оборачиваем.
+    try {
+      if (!req.destroyed && typeof req.destroy === "function") req.destroy();
+    } catch (err) {
+      console.error("auth: не удалось оборвать соединение", err);
+    }
+  };
+  const timer = setTimeout(kill, 1000);
+  if (typeof timer.unref === "function") timer.unref();
+  res.on("finish", kill);
+  res.on("close", kill);
+}
+
+function sendPayloadTooLarge(req, res) {
+  if (canRespond(res)) {
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Connection", "close");
+    res.status(413).send("Слишком большой запрос.");
+  }
+  destroyAfterResponse(req, res);
 }
 
 // Форма ввода пароля.
@@ -120,27 +217,50 @@ function successPage(token, targetOrigin) {
 }
 
 module.exports = async (req, res) => {
-  const token = process.env.GITHUB_TOKEN;
-  const password = process.env.ADMIN_PASSWORD;
+  // Заглушки на 'error' ставим до любой работы: соединение может оборваться
+  // (в том числе из-за нашего же req.destroy()), и необработанное событие
+  // 'error' на потоке завершило бы процесс.
+  ignoreStreamErrors(req);
+  ignoreStreamErrors(res);
 
-  if (!token || !password) {
-    sendHtml(res, formPage("Панель не настроена: задайте GITHUB_TOKEN и ADMIN_PASSWORD в Vercel."));
-    return;
-  }
+  try {
+    const token = process.env.GITHUB_TOKEN;
+    const password = process.env.ADMIN_PASSWORD;
 
-  const proto = (req.headers["x-forwarded-proto"] || "https").split(",")[0];
-  const host = req.headers["x-forwarded-host"] || req.headers.host;
-  const selfOrigin = `${proto}://${host}`;
-
-  if (req.method === "POST") {
-    const submitted = await getSubmittedPassword(req);
-    if (safeEqual(submitted, password)) {
-      sendHtml(res, successPage(token, selfOrigin));
-    } else {
-      sendHtml(res, formPage("Неверный пароль."));
+    if (!token || !password) {
+      sendHtml(
+        res,
+        formPage("Панель не настроена: задайте GITHUB_TOKEN и ADMIN_PASSWORD в Vercel."),
+      );
+      return;
     }
-    return;
-  }
 
-  sendHtml(res, formPage());
+    const proto = (req.headers["x-forwarded-proto"] || "https").split(",")[0];
+    const host = req.headers["x-forwarded-host"] || req.headers.host;
+    const selfOrigin = `${proto}://${host}`;
+
+    if (req.method === "POST") {
+      const submitted = await getSubmittedPassword(req);
+      if (submitted === PAYLOAD_TOO_LARGE) {
+        sendPayloadTooLarge(req, res);
+        return;
+      }
+      if (safeEqual(submitted, password)) {
+        sendHtml(res, successPage(token, selfOrigin));
+      } else {
+        sendHtml(res, formPage("Неверный пароль."));
+      }
+      return;
+    }
+
+    sendHtml(res, formPage());
+  } catch (err) {
+    // Сюда попадают только неожиданные сбои (например, запись в уже мёртвый
+    // сокет). Ронять процесс из-за одного запроса нельзя.
+    console.error("auth: ошибка обработки запроса", err);
+    if (canRespond(res)) {
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.status(500).send("Внутренняя ошибка.");
+    }
+  }
 };
